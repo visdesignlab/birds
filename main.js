@@ -45,7 +45,9 @@ function setup() {
             console.log('GeoJSON data:', geojsonData); // Check if GeoJSON data is printed in the console
 
             // Create a D3 projection
-            const projection = d3.geoIdentity().fitSize([pageWidth / 2, pageHeight - 50], geojsonData);
+            const projection = d3.geoIdentity().scale(1300).fitSize([pageWidth / 2, pageHeight - 50], geojsonData);
+
+            const colors = d3.scaleSequential(d3.interpolateBlues).domain([-0.5, 1]);            
 
             // Create a path generator
             const pathGenerator = d3.geoPath().projection(projection);
@@ -55,10 +57,12 @@ function setup() {
                 .data(geojsonData.features)
                 .enter().append("path")
                 .attr("d", pathGenerator)
-                .style("fill", "steelblue")
+                .style("fill", d => d.properties.eargre !== 'NA' ? colors(d.properties.eargre) : 'lightgray')
                 .style("stroke", "white");
         })
         .catch(error => console.error('Error loading GeoJSON file:', error));
 }
+
+
 
 setup();
