@@ -34,7 +34,7 @@ function setup() {
         .attr("width", pageWidth / 2);
 
     // Load GeoJSON data using fetch
-    fetch('plot_eargre_new.geojson')
+    fetch('plot_eargre_long_lat_new2.geojson')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
