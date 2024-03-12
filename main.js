@@ -35,7 +35,7 @@ function setup() {
 
     // Load GeoJSON data for the entire United States and Mexico
     Promise.all([
-        fetch('custom.geo.json').then(response => response.json()), // Replace 'us_mexico.geojson' with the path to your file
+        fetch('custom.geo.json').then(response => response.json()), 
         fetch('plot_eargre_long_lat_new2.geojson').then(response => response.json())
     ])
     .then(data => {
@@ -43,8 +43,12 @@ function setup() {
         console.log('US-Mexico GeoJSON data:', usMexicoData);
         console.log('Bird population observation data:', birdData);
 
-        // Create a D3 projection
-        const projection = d3.geoIdentity().reflectY(true).scale(500).fitSize([pageWidth / 2, pageHeight - 50], usMexicoData);
+        // Create a D3 projection focusing on the US and Mexico
+        const projection = d3.geoAlbers()
+            .center([0, 25])  // Center the map around the desired area
+            // .rotate([100, 0]) // Rotate the map to focus on the desired area
+            .scale(1300)
+            .translate([pageWidth / 4, pageHeight / 2]);
 
         const colors = d3.scaleSequential(d3.interpolateBlues).domain([-0.5, 1]);
 
@@ -52,13 +56,12 @@ function setup() {
         const pathGenerator = d3.geoPath().projection(projection);
 
         // Append paths for US-Mexico map
-        migrationSvg.selectAll(".us-mexico")
+        migrationSvg.selectAll(".custom")
             .data(usMexicoData.features)
             .enter().append("path")
-            .attr("class", "us-mexico")
+            .attr("class", "custom")
             .attr("d", pathGenerator)
-            .style("fill", "lightgray")
-            .style("stroke", "white");
+            .style("fill", "lightgray");
 
         // Append paths for bird observation data
         migrationSvg.selectAll(".bird-observation")
@@ -66,8 +69,7 @@ function setup() {
             .enter().append("path")
             .attr("class", "bird-observation")
             .attr("d", pathGenerator)
-            .style("fill", d => d.properties.eargre !== 'NA' ? colors(d.properties.eargre) : 'lightgray')
-            .style("stroke", "white");
+            .style("fill", d => d.properties.eargre !== 'NA' ? colors(d.properties.eargre) : 'lightgray');
     })
     .catch(error => console.error('Error loading GeoJSON files:', error));
 }
