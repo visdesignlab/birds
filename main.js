@@ -7,7 +7,6 @@ const globalApplicationState = {
 
 globalApplicationState.current_species_data = `${globalApplicationState.current_state}/plot_${globalApplicationState.current_species}_2004`
 
-
 const pageWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 const pageHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
@@ -68,7 +67,7 @@ function setup() {
         .tickFormat((d) => d) // Tick values range from 2004 to 2023
         .on('onchange', val => {
             updateSpeciesData(val)
-             updateMap(val);
+            updateMap(val);
         });
 
     // Append the slider to the slider SVG
@@ -99,7 +98,6 @@ function setup() {
 
     // Load GeoJSON data for the entire United States and Mexico
     Promise.all([
-        // C:\Users\u1355\OneDrive\Desktop\Data Viz\Thesis Website\birds\ut_eg_geojsons\plot_eargre_2004.geojson
         fetch('map_geojsons/custom.geo.json').then(response => response.json()), 
         fetch(`${globalApplicationState.current_species_data}.geojson`).then(response => response.json()),
         fetch('map_geojsons/us_states.geojson').then(response => response.json()), 
