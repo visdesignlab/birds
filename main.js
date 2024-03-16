@@ -33,75 +33,30 @@ function setup() {
         .attr("height", pageHeight - 50)
         .attr("width", pageWidth / 2);
 
-    // Create a color scale
-    const colorScale = d3.scaleSequential(d3.interpolateBlues).domain([-0.5, 1]);
-
-    // Create a color bar scale
-    const colorBarSvg = body.append('svg')
-        .attr('id', 'colorBarSvg')
-        .attr("height", 200)
-        .attr("width", 50)
-        .style("position", "absolute") // Ensure the color scale is positioned correctly
-        .style("bottom", "20px") // Adjust the bottom position as needed
-        .style("left", "20px") // Adjust the left position as needed
-        // .style("z-index", "999"); // Ensure the color scale appears above other elements
-
-    const colorBar = d3.scaleLinear()
-        .range(["white", "steelblue"])
-        .domain([0, 1]);
-
-    const colorValues = d3.range(0, 1.1, 0.2); // Define color values for ticks
-    
-    const colorBarAxis = d3.axisRight(colorBar)
-        .tickValues(colorValues) // Set tick values
-        .tickSize(10) // Adjust tick size
-        .tickPadding(5) // Adjust padding between ticks and labels
-        .tickFormat(d3.format(".1f")); // Format tick labels
-
-    colorBarSvg.append("g")
-        .attr("transform", "translate(25,40)")
-        .call(colorBarAxis)
-        .select(".domain").remove(); // Remove axis line
-
-    // Add color gradient
-    const defs = colorBarSvg.append("defs");
-    const linearGradient = defs.append("linearGradient")
-        .attr("id", "linear-gradient")
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "0%")
-        .attr("y2", "100%");
-
-    linearGradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", colorScale(0));
-
-    linearGradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", colorScale(1));
-
-    colorBarSvg.append("rect")
-        .attr("width", 20)
-        .attr("height", 200)
-        .style("fill", "url(#linear-gradient)");
-
     // Load GeoJSON data for the entire United States and Mexico
     Promise.all([
-        fetch('custom.geo.json').then(response => response.json()), 
-        fetch('plot_eargre_2005.geojson').then(response => response.json())
+        // C:\Users\u1355\OneDrive\Desktop\Data Viz\Thesis Website\birds\ut_eg_geojsons\plot_eargre_2004.geojson
+        fetch('map_geojsons/custom.geo.json').then(response => response.json()), 
+        fetch('ut_eg_geojsons/plot_eargre_2005.geojson').then(response => response.json()),
+        fetch('map_geojsons/us_states.geojson').then(response => response.json()), 
+        fetch('map_geojsons/states.geojson').then(response => response.json()) 
     ])
     .then(data => {
-        const [usMexicoData, birdData] = data;
+        const [usMexicoData, birdData, usStatesData, mexicoStatesData] = data;
         console.log('US-Mexico GeoJSON data:', usMexicoData);
         console.log('Bird population observation data:', birdData);
+        console.log('US States GeoJSON data:', usStatesData);
+        console.log('Mexico States GeoJSON data:', mexicoStatesData);
 
         // Create a D3 projection focusing on the US and Mexico
         const projection = d3.geoAlbers()
-            .center([-10, 35])  // Center the map around the desired area
-            .scale(2000)
+            .center([-5, 28])  // Center the map around the desired area
+            .scale(900)
             .translate([pageWidth / 4, pageHeight / 2]);
 
-        const colors = d3.scaleSequential(d3.interpolateBlues).domain([-0.5, 1]);
+        // Define custom color scale for bird observation data
+        const customColorScale = d3.scaleSequential(d3.interpolateBlues)
+            .domain([-0.5, 1]);
 
         // Create a path generator
         const pathGenerator = d3.geoPath().projection(projection);
@@ -114,15 +69,118 @@ function setup() {
             .attr("d", pathGenerator)
             .style("fill", "lightgray");
 
+        // Append paths for US state boundaries
+        migrationSvg.selectAll(".state-boundary")
+            .data(usStatesData.features)
+            .enter().append("path")
+            .attr("class", "state-boundary")
+            .attr("d", pathGenerator)
+            .style("fill", "none") // No fill for state borders
+            .style("stroke", "black") // Border color
+            .style("stroke-width", 1); // Border width
+
+        // Append paths for Mexico state boundaries
+        migrationSvg.selectAll(".mexico-state-boundary")
+            .data(mexicoStatesData.features)
+            .enter().append("path")
+            .attr("class", "mexico-state-boundary")
+            .attr("d", pathGenerator)
+            .style("fill", "none")
+            .style("stroke", "black")
+            .style("stroke-width", 1);
+
         // Append paths for bird observation data
         migrationSvg.selectAll(".bird-observation")
             .data(birdData.features)
             .enter().append("path")
             .attr("class", "bird-observation")
             .attr("d", pathGenerator)
-            .style("fill", d => d.properties.eargre !== 'NA' ? colors(d.properties.eargre) : 'lightgray');
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'none'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("#d3d3d3", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
     })
     .catch(error => console.error('Error loading GeoJSON files:', error));
+
+
+        // Append SVG for the slider
+    const sliderSvg = body.append('svg')
+    .attr('id', 'sliderSvg')
+    .attr("height", pageHeight)
+    .attr("width", pageWidth / 2)
+    .style("position", "absolute") // Position absolutely
+    .style("top", "50px") // Adjust top position as needed
+    .style("left", "0px") // Position it on the left side
+
+    // Create the slider
+    const slider = d3.sliderHorizontal()
+    .min(2004)
+    .max(2023)
+    .step(1)
+    .width(pageWidth / 2.5) // Adjust the width as needed
+    .tickValues(d3.range(2004, 2024, 1)) // Include all years as tick values
+    .tickFormat((d) => d); // Tick values range from 2004 to 2023
+
+    // Append the slider to the slider SVG
+    sliderSvg.append('g')
+    .attr('transform', 'translate(60,510)') // Adjust positioning as needed
+    .attr("id", "slider_group")
+    .call(slider)
+    .attr('class', 'slider');
+
+    // Select all ticks and style them
+    sliderSvg.selectAll(".tick line")
+    .style("stroke-width", "2px") // Adjust stroke width as needed
+    .attr("y2", 10)
+    .style("stroke", "black");
+
+    // const sliderSvg = body.append('svg')
+    // .attr('id', 'sliderSvg')
+    // .attr("height", 50)
+    // .attr("width", pageWidth / 2)
+    // .style("position", "absolute") // Position absolutely
+    // .style("top", "0px") // Adjust top position as needed
+    // .style("left", "0px"); // Position it on the left side
+
+// Create the slider
+    // const slider = d3.sliderHorizontal()
+    //     .min(1) // January is represented as 1
+    //     .max(12) // December is represented as 12
+    //     .step(1)
+    //     .width(pageWidth / 3) // Adjust the width as needed
+    //     .tickValues(d3.range(1, 13, 1)) // Include all months as tick values
+    //     .tickFormat((d) => {
+    //         const months = [
+    //             'January', 'February', 'March', 'April', 'May', 'June',
+    //             'July', 'August', 'September', 'October', 'November', 'December'
+    //         ];
+    //         return months[d - 1]; // Adjust index to match months array
+    //     });
+
+    // // Append the slider to the slider SVG
+    // sliderSvg.append('g')
+    //     .attr('transform', 'translate(50,20)') // Adjust positioning as needed
+    //     .attr("id", "slider_group")
+    //     .call(slider)
+    //     .attr('class', 'slider');
+
+    // // Select all ticks and style them
+    // sliderSvg.selectAll(".tick line")
+    //     .style("stroke-width", "2px") // Adjust stroke width as needed
+    //     .attr("y2", 10)
+    //     .style("stroke", "black");
+
+
+    
+
+
+
+
 }
 
 setup();
