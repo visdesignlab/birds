@@ -45,7 +45,7 @@ function setup() {
     // Append SVG for the slider
     const sliderSvg = body.append('svg')
         .attr('id', 'sliderSvg')
-        .attr("height", pageHeight)
+        .attr("height", pageHeight - 50)
         .attr("width", pageWidth / 2)
         .style("position", "absolute") // Position absolutely
         .style("top", "50px") // Adjust top position as needed
@@ -72,7 +72,7 @@ function setup() {
 
     // Append the slider to the slider SVG
     sliderSvg.append('g')
-        .attr('transform', 'translate(60,510)') // Adjust positioning as needed
+        .attr('transform', 'translate(60,690)') // Adjust positioning as needed
         .attr("id", "slider_group")
         .call(slider)
         .attr('class', 'slider');
