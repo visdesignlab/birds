@@ -1,3 +1,12 @@
+import Reveal from 'reveal.js';
+import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
+
+let deck = new Reveal({
+   plugins: [ Markdown ]
+})
+deck.initialize();
+
+
 const globalApplicationState = {
     current_species : 'eargre',
     current_state : 'ut_eg_geojsons',
