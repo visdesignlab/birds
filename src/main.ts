@@ -1,11 +1,6 @@
-import Reveal from 'reveal.js';
-import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
-
-let deck = new Reveal({
-   plugins: [ Markdown ]
-})
-deck.initialize();
-
+import * as d3 from 'd3'
+import { sliderBottom } from 'd3-simple-slider'
+import bootstrap from 'bootstrap'
 
 const globalApplicationState = {
     current_species : 'eargre',
@@ -35,6 +30,10 @@ function setup() {
         .attr("class", "text title")
         .attr("fill", "black")
         .text("Visualizing GSL Birds: Where are they going and why?");
+
+    // const button = d3.select("#header").append("button")
+    //     .attr("class", "btn btn-primary")
+    //     .text('Hello World')
 
     // Calculate the text width
     const textWidth = text.node().getBBox().width;
@@ -67,7 +66,7 @@ function setup() {
     }  
 
     // Create the slider
-    const slider = d3.sliderHorizontal()
+    const slider = sliderBottom()
         .min(2004)
         .max(2023)
         .step(1)
