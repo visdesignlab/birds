@@ -84,10 +84,12 @@ function setup() {
     const animate_section2 = slides_div.append('section')
         .attr('data-auto-animate', '')
         // .attr('data-auto-animate-id', 'two')
-        // .append('h1').text('How is El Nino affecting the American White Pelican?').style('font-size', '100px')
-        .append('h1').style('color', 'black').text('Lets Find Out').style('font-size', '100px');
+        .append('h1').style('color', 'black').text('How is El Nino affecting the American White Pelican?').style('font-size', '100px')
+        .append('h1').style('color', 'black').style('margin-top', '100px').text('Lets Find Out').style('font-size', '100px');
 
-    Reveal.initialize();
+    Reveal.initialize({
+        autoAnimateEasing: 'ease-out'
+    });
 
     function updateSpeciesData(year) {
         globalApplicationState.current_species_data[0] = `${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species}_${year}`;
@@ -126,6 +128,21 @@ function setup() {
     .center([-2, 28])  // Center the map around the desired area
     .scale(900)
     .translate([pageWidth / 4, pageHeight / 2]);
+
+        // Define the zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8]) // Set the zoom extent
+        .on('zoom', zoomed); // Call the zoomed function when zoom event occurs
+
+    // Apply the zoom behavior to the migration SVG container
+    migrationSvg.call(zoom);
+
+    // Define the zoomed function
+    function zoomed(event) {
+        // Update the transformation of the container group
+        migrationSvg.select('g').attr('transform', event.transform);
+    }
+
 
     // Define custom color scale for bird observation data
     const customColorScale = d3.scaleSequential(d3.interpolateBlues)
