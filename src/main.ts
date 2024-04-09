@@ -23,33 +23,41 @@ function setup() {
     const body = d3.select('body')
     body.style("background-color", "white");
 
-    const header = body.append('div')
-        .attr('class', 'header')
-        .attr("id", "header");
+    // const header = body.append('div')
+    //     .attr('class', 'header')
+    //     .attr("id", "header");
 
-    const headerSvg = header.append("svg")
-        .attr('id', 'headerSvg')
-        .attr("height", 50)
-        .attr("width", pageWidth);
+    // const headerSvg = header.append("svg")
+    //     .attr('id', 'headerSvg')
+    //     .attr("height", 50)
+    //     .attr("width", pageWidth);
 
-    const text = d3.select("#headerSvg").append("text")
-        .attr("class", "text title")
-        .attr("fill", "black")
-        .text("Visualizing GSL Birds: Where are they going and why?");
+    // const text = d3.select("#headerSvg").append("text")
+    //     .attr("class", "text title")
+    //     .attr("fill", "black")
+    //     .text("Visualizing GSL Birds: Where are they going and why?");
 
-    const textWidth = text.node().getBBox().width;
+    // const textWidth = text.node().getBBox().width;
 
-    text.attr("x", (pageWidth - textWidth) / 2)
-        .attr("y", 25);
+    // text.attr("x", (pageWidth - textWidth) / 2)
+    //     .attr("y", 25);
 
     const maps_div = body.append('div')
         .attr('class', 'container')
         .attr("id", "migration_div")
-        .attr('height', pageHeight + 1000)
-        .style("left", pageWidth / 2 + "px"); ;
+        .attr('height', pageHeight)
+        // .style("left", "0px") 
+        .style("position", "absolute") 
+        .style("top", "50px") 
+        .style("right", "0px") // Position maps_div to the right
+        .style("width", pageWidth / 2 + "px")
+        // .style("overflow", "hidden"); 
 
     const migrationSvg = maps_div.append('svg')
         .attr('id', 'migrationSvg')
+        .style("position", "absolute") 
+        .style("top", "50px") 
+        .style("right", "0px")
         .attr("height", pageHeight - 50)
         .attr("width", pageWidth / 2);
 
@@ -59,42 +67,93 @@ function setup() {
         .attr("width", pageWidth / 2)
         .style("position", "absolute") 
         .style("top", "50px") 
-        .style("left", "0px") 
+        .style("right", "0px") 
 
     const reveal_div = body.append('div')
         .attr('class', 'reveal')
         .attr('id', 'revealDiv')
         .style("position", "absolute") 
         .style("top", "50px") 
-        .style("left", pageWidth / 2 + "px") 
+        .style("left", "0px") 
         .style("width", pageWidth / 2 + "px") 
         .style("height", pageHeight - 50 + "px") 
-        .style("overflow", "auto")
+        // .style("overflow", "auto")
+        .style("overflow", "hidden")
         .style("background-color", "white"); 
 
     const slides_div = reveal_div.append('div').attr('class', 'slides')
 
-    const animate_section = slides_div.append('section')
-        .attr('data-auto-animate', '')
-        .attr('class', 'year-2023')
-        .append('h1').style('color', 'black').text('How is El Nino affecting the American White Pelican?').style('font-size', '100px').style('fill', );
+    // const opening_section = slides_div.append('section')
+    //     .attr('data-auto-animate', 'running')
+    //     .attr('data-background-iframe', 'https://tenor.com/view/living-color-tribe-edition-ayia-napa-living-color-tribe-edition-kaz-james-gif-26151239')
+    //     .attr('data-background-interactive', '')
+
+    // const opening = slides_div.append('section')
+    //     .attr('data-auto-animate', 'running')
+    //     .attr('id', 'animate_section')
+    //     .attr('data-transition', 'fade-in')
+    //     .append('h1')
+    //     .style('color', 'black')
+    //     .text('Navigating Bird Migrations in a Changing Climate')
+    //     .style('font-size', '70px')
+    //     .style('fill', 'black')
+    //     .classed('fade-in', true); // Make sure to specify the fill color
+
+    // opening.append('p').attr('class', 'fragment').text('Navigating Flight Paths');
+
+    const opening = slides_div.append('section')
+        .attr('data-auto-animate', 'running')
+        .attr('id', 'animate_section')
+        .attr('data-transition', 'fade-in');
+
+    const pElement = document.createElement('p');
+    pElement.textContent = 'Navigating Bird Migrations in a Changing Climate';
+    pElement.style.color = 'black';
+    pElement.style.fontSize = '70px';
+    pElement.classList.add('fade-in');
+    opening.node().appendChild(pElement);
+    
 
     const animate_section2 = slides_div.append('section')
         .attr('data-auto-animate', '')
-        .attr('class', 'year-2004')
-        .append('h1').style('color', 'black').text('How is El Nino affecting the American White Pelican?').style('font-size', '100px')
-        .append('h1').style('color', 'black').style('margin-top', '100px').text('Lets Find Out').style('font-size', '100px');
+        .attr('data-auto-animate', 'running')
+        .attr('id', 'animate_section2')
+        .attr('data-transition', 'fade-in');
+
+        // Text contents for the paragraph
+    const textContents = [
+        'Navigating Bird Migrations in a Changing Climate',
+        'How is El Nino Impacting this?'
+        ];
+
+    textContents.forEach(text => {
+        const paragraphElement = document.createElement('p');
+        paragraphElement.textContent = text;
+        paragraphElement.style.color = 'black';
+        paragraphElement.style.fontSize = '70px';
+        paragraphElement.classList.add('fade-in');
+        animate_section2.node().appendChild(paragraphElement);
+        });
+
 
     Reveal.initialize({
-        autoAnimateEasing: 'ease-out'
+        view: 'scroll',
+        scrollProgress: false,
+        scrollLayout: 'full',
+        // backgroundTransition: 'slide',
+        autoAnimateEasing: 'ease-out',
+        // autoAnimateDuration: 1.5
     });
 
-    Reveal.on( 'slidechanged', event => {
+    
 
-        const val = event.currentSlide.className.split("-")[1].split(" ")[0]
-        updateSpeciesData(val)
-        updateMap(val);
-    } );
+
+    // Reveal.on( 'slidechanged', event => {
+
+    //     const val = event.currentSlide.className.split("-")[1].split(" ")[0]
+    //     updateSpeciesData(val)
+    //     updateMap(val);
+    // } );
 
     function updateSpeciesData(year) {
         globalApplicationState.current_species_data[0] = `${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species[0]}_${year}`;
@@ -103,6 +162,7 @@ function setup() {
         globalApplicationState.current_species_data[3] = `${globalApplicationState.current_states[3]}/plot_${globalApplicationState.current_species[0]}_ca_${year}`;
         globalApplicationState.current_species_data[4] = `${globalApplicationState.current_states[4]}/plot_${globalApplicationState.current_species[0]}_az_${year}`;
     }  
+
 
     // Create the slider
     const slider = sliderBottom()
@@ -132,23 +192,23 @@ function setup() {
 
     // Create a D3 projection focusing on the US and Mexico
     const projection = d3.geoAlbers()
-        .center([-2, 28])  // Center the map around the desired area
-        .scale(900)
+        .center([0, 33])  // Center the map around the desired area
+        .scale(2500)
         .translate([pageWidth / 4, pageHeight / 2]);
 
         // Define the zoom behavior
-    const zoom = d3.zoom()
-        .scaleExtent([1, 8]) // Set the zoom extent
-        .on('zoom', zoomed); // Call the zoomed function when zoom event occurs
+    // const zoom = d3.zoom()
+    //     .scaleExtent([1, 8]) // Set the zoom extent
+    //     .on('zoom', zoomed); // Call the zoomed function when zoom event occurs
 
-    // Apply the zoom behavior to the migration SVG container
-    migrationSvg.call(zoom);
+    // // Apply the zoom behavior to the migration SVG container
+    // migrationSvg.call(zoom);
 
-    // Define the zoomed function
-    function zoomed(event) {
-        // Update the transformation of the container group
-        migrationSvg.select('g').attr('transform', event.transform);
-    }
+    // // Define the zoomed function
+    // function zoomed(event) {
+    //     // Update the transformation of the container group
+    //     migrationSvg.select('g').attr('transform', event.transform);
+    // }
 
 
     // Define custom color scale for bird observation data

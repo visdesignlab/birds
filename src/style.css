@@ -11,6 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --monaco-font: Monaco, monospace;
 }
 
 a {
@@ -109,5 +110,22 @@ button:focus-visible {
     border: 1px solid #ccc;
     margin-bottom: 5px; /* Adjust spacing between items */
   }
-  
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeInAnimation 5s ease-in forwards;
+  }
+
+  @keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+  }
+
+  /* Existing CSS rules for light color scheme */
+
+  /* Add other CSS rules for light color scheme as needed */
 }
