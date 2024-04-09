@@ -123,7 +123,7 @@ function setup() {
         // Text contents for the paragraph
     const textContents = [
         'Navigating Bird Migrations in a Changing Climate',
-        'How is El Nino Impacting this?'
+        'What role does El Nino play in this?'
         ];
 
     textContents.forEach(text => {
