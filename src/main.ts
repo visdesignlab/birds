@@ -5,6 +5,7 @@ import { Button } from '@mantine/core';
 
 const globalApplicationState = {
     // make this depend on what button is selected once implemented 
+    all_data : null,
     current_species : ['eargre', 'amwpel'],
     current_states : ['ut_eg_geojsons', 'nv_eg_geojsons', 'mex_eg_geojsons', 'ca_eg_geojsons', 'az_eg_geojsons'],
     current_species_data : [''],
@@ -17,7 +18,7 @@ globalApplicationState.current_species_data = [`${globalApplicationState.current
 `${globalApplicationState.current_states[3]}/plot_${globalApplicationState.current_species[0]}_ca_2004`,
 `${globalApplicationState.current_states[4]}/plot_${globalApplicationState.current_species[0]}_az_2004`]
 
-const pageWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+const pageWidth = window.innerWidth - 40 || document.documentElement.clientWidth || document.body.clientWidth;
 const pageHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
 function setup() {
@@ -59,6 +60,7 @@ function setup() {
         .style("height", pageHeight)
         .attr('position', 'fixed')
         .attr("width", pageWidth / 2)
+        .style('margin', '20px')
         // .attr('viewBox', `0 0 ${pageWidth / 2} ${pageHeight}`);
 
     const sliderSvg = body.append('svg')
@@ -77,7 +79,8 @@ function setup() {
         .style("width", pageWidth / 2 + "px") 
         .style("height", pageHeight + "px") 
         .style("overflow", "hidden")
-        .style("background-color", "#d3d3d3"); 
+        .style("background-color", "#d3d3d3")
+        .style('margin', '10px'); 
 
     const slides_div = reveal_div.append('div').attr('class', 'slides')
 
@@ -240,9 +243,8 @@ function setup() {
     const utahLong = -111.0937; 
 
     const projection = d3.geoAlbers()
-        // .center([utahLong, utahLat])
-        .fitSize([pageWidth / 2, pageHeight], '')
-        .center([0, 35.5]) 
+        // .scale(4)
+        // .center([utahLong, utahLat])     
         .translate([pageWidth / 4, pageHeight / 2])
     
     const customColorScale = d3.scaleSequential(d3.interpolateBlues)
@@ -256,30 +258,25 @@ function setup() {
 
     migrationSvg.call(zoom);
 
-    // Define the zoom event handler function
     function zoomed(event) {
-        // Get the current transformation
         const { transform } = event;
-    
-        // migrationSvg.selectAll('.bird-observation')
-        //     .attr('transform', transform);
-        
+        migrationSvg.attr("transform", transform)
+        console.log(event)
     }
+
     
     function zoomToUtah() {
         const utahLat = 39.3210; 
         const utahLong = -111.0937; 
         const utahScale = 4.8;
-    
-        // const [x, y] = projection([utahLong, utahLat]);
-    
-        // projection.scale(utahScale)
-        //     .center([utahLong, utahLat])    
-            // .translate([pageWidth / 4 - x * utahScale, pageHeight / 2 - y * utahScale]);
-    
-        migrationSvg.transition()
-            .duration(3000)
-            .attr('transform', `translate(${pageWidth / 2},${pageHeight / 2}) scale(${utahScale})`);
+
+        const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = globalApplicationState.all_data 
+
+        const center = d3.geoCentroid(usStatesData.features[21])
+        console.log(usStatesData.features[21])
+        projection.center(center).fitSize([pageWidth / 2, pageHeight], { ...usStatesData, features : [usStatesData.features[21]]})
+
+        draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)    
     }    
 
     buttonElement.addEventListener('click', function() {
@@ -305,85 +302,13 @@ function setup() {
     //     updateMap(val);
     // } );
 
-    function updateSpeciesData(year) {
-        globalApplicationState.current_species_data[0] = `${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species[0]}_${year}`;
-        globalApplicationState.current_species_data[1] = `${globalApplicationState.current_states[1]}/plot_${globalApplicationState.current_species[0]}_nv_${year}`;
-        globalApplicationState.current_species_data[2] = `${globalApplicationState.current_states[2]}/plot_${globalApplicationState.current_species[0]}_mex_${year}`;
-        globalApplicationState.current_species_data[3] = `${globalApplicationState.current_states[3]}/plot_${globalApplicationState.current_species[0]}_ca_${year}`;
-        globalApplicationState.current_species_data[4] = `${globalApplicationState.current_states[4]}/plot_${globalApplicationState.current_species[0]}_az_${year}`;
-    }  
+    function draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator) {
 
+        // const center = d3.geoCentroid(usStatesData.features[21])
+        // projection.center(center).fitSize([pageWidth / 2, pageHeight], { ...usStatesData, features : [usStatesData.features[21]]})
 
-    const slider = sliderBottom()
-        .min(2004)
-        .max(2023)
-        .step(1)
-        .width(pageWidth / 2.5) 
-        .tickValues(d3.range(2004, 2024, 1)) 
-        .tickFormat((d) => d) 
-        .on('onchange', val => {
-            updateSpeciesData(val)
-            updateMap(val);
-        });
+        // migrationSvg.selectAll().remove();
 
-    sliderSvg.append('g')
-        .attr('transform', 'translate(60,400)') 
-        .attr("id", "slider_group")
-        .call(slider)
-        .attr('class', 'slider');
-
-    sliderSvg.selectAll(".tick line")
-        .style("stroke-width", "2px") 
-        .attr("y2", 10)
-        .style("stroke", "black");
-
-    let usStates;
-    let mexicoStates;
-
-    function appendStateBoundaries(usStatesData, mexicoStatesData) {
-        migrationSvg.selectAll(".state-boundary")
-            .data(usStatesData.features)
-            .enter().append("path")
-            .attr("class", "state-boundary")
-            .attr("d", pathGenerator)
-            .style("fill", "none") 
-            .style("stroke", "black") 
-            .style("stroke-width", 1); 
-        migrationSvg.selectAll(".mexico-state-boundary")
-            .data(mexicoStatesData.features)
-            .enter().append("path")
-            .attr("class", "mexico-state-boundary")
-            .attr("d", pathGenerator)
-            .style("fill", "none")
-            .style("stroke", "black")
-            .style("stroke-width", 1);
-    }
-
-    Promise.all([
-        fetch(`${globalApplicationState.current_species_data[0]}.geojson`).then(response => response.json()),
-        fetch(`${globalApplicationState.current_species_data[1]}.geojson`).then(response => response.json()),
-        fetch(`${globalApplicationState.current_species_data[2]}.geojson`).then(response => response.json()),
-        fetch(`${globalApplicationState.current_species_data[3]}.geojson`).then(response => response.json()),
-        fetch(`${globalApplicationState.current_species_data[4]}.geojson`).then(response => response.json()),
-        fetch('map_geojsons/us_states.geojson').then(response => response.json()), 
-        fetch('map_geojsons/states.geojson').then(response => response.json()) 
-    ])
-    
-    .then(data => {
-        const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = data;
-        console.log('UT Bird population observation data:', utBirdData);
-        console.log('NV Bird population observation data:', nvBirdData);
-        console.log('MEX Bird population observation data:', mexBirdData);
-        console.log('CA Bird population observation data:', caBirdData)
-        console.log('AZ Bird population observation data:', azBirdData)
-        console.log('US States GeoJSON data:', usStatesData);
-        console.log('Mexico States GeoJSON data:', mexicoStatesData);
-
-        projection.fitSize([pageWidth / 2, pageHeight], usStatesData)
-
-
-        usStates = usStatesData
-        mexicoStates = mexicoStatesData
         migrationSvg.selectAll(".bird-observation")
             .data(utBirdData.features)
             .enter().append("path")
@@ -456,13 +381,94 @@ function setup() {
                     return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
                 }
             });
-
         
-        appendStateBoundaries(usStates, mexicoStates);
+        appendStateBoundaries(usStatesData, mexicoStatesData);
+    }
+
+    function updateSpeciesData(year) {
+        globalApplicationState.current_species_data[0] = `${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species[0]}_${year}`;
+        globalApplicationState.current_species_data[1] = `${globalApplicationState.current_states[1]}/plot_${globalApplicationState.current_species[0]}_nv_${year}`;
+        globalApplicationState.current_species_data[2] = `${globalApplicationState.current_states[2]}/plot_${globalApplicationState.current_species[0]}_mex_${year}`;
+        globalApplicationState.current_species_data[3] = `${globalApplicationState.current_states[3]}/plot_${globalApplicationState.current_species[0]}_ca_${year}`;
+        globalApplicationState.current_species_data[4] = `${globalApplicationState.current_states[4]}/plot_${globalApplicationState.current_species[0]}_az_${year}`;
+    }  
+
+
+    const slider = sliderBottom()
+        .min(2004)
+        .max(2023)
+        .step(1)
+        .width(pageWidth / 2.5) 
+        .tickValues(d3.range(2004, 2024, 1)) 
+        .tickFormat((d) => d) 
+        .on('onchange', val => {
+            updateSpeciesData(val)
+            updateMap(val);
+        });
+
+    sliderSvg.append('g')
+        .attr('transform', 'translate(60,400)') 
+        .attr("id", "slider_group")
+        .call(slider)
+        .attr('class', 'slider');
+
+    sliderSvg.selectAll(".tick line")
+        .style("stroke-width", "2px") 
+        .attr("y2", 10)
+        .style("stroke", "black");
+
+    let usStates;
+    let mexicoStates;
+
+    function appendStateBoundaries(usStatesData, mexicoStatesData) {
+        migrationSvg.selectAll(".state-boundary")
+            .data(usStatesData.features)
+            .enter().append("path")
+            .attr("class", "state-boundary")
+            .attr("d", pathGenerator)
+            .style("fill", "none") 
+            .style("stroke", "black") 
+            .style("stroke-width", 1); 
+        migrationSvg.selectAll(".mexico-state-boundary")
+            .data(mexicoStatesData.features)
+            .enter().append("path")
+            .attr("class", "mexico-state-boundary")
+            .attr("d", pathGenerator)
+            .style("fill", "none")
+            .style("stroke", "black")
+            .style("stroke-width", 1);
+    }
+
+    Promise.all([
+        fetch(`${globalApplicationState.current_species_data[0]}.geojson`).then(response => response.json()),
+        fetch(`${globalApplicationState.current_species_data[1]}.geojson`).then(response => response.json()),
+        fetch(`${globalApplicationState.current_species_data[2]}.geojson`).then(response => response.json()),
+        fetch(`${globalApplicationState.current_species_data[3]}.geojson`).then(response => response.json()),
+        fetch(`${globalApplicationState.current_species_data[4]}.geojson`).then(response => response.json()),
+        fetch('map_geojsons/us_states.geojson').then(response => response.json()), 
+        fetch('map_geojsons/states.geojson').then(response => response.json()) 
+    ])
+
+    .then(data => {
+        const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = data;
+        globalApplicationState.all_data = data;
+        console.log('UT Bird population observation data:', utBirdData);
+        console.log('NV Bird population observation data:', nvBirdData);
+        console.log('MEX Bird population observation data:', mexBirdData);
+        console.log('CA Bird population observation data:', caBirdData)
+        console.log('AZ Bird population observation data:', azBirdData)
+        console.log('US States GeoJSON data:', usStatesData);
+        console.log('Mexico States GeoJSON data:', mexicoStatesData);
+
+        projection.fitSize([pageWidth / 2, pageHeight], {...usStatesData, features: [...usStatesData.features, ...mexicoStatesData.features]})
+
+        usStates = usStatesData
+        mexicoStates = mexicoStatesData
+
+        draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)
   
     })
     .catch(error => console.error('Error loading GeoJSON files:', error));
-
 
     function updateMap(year: number) {
 
