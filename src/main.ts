@@ -47,7 +47,7 @@ function setup() {
     const maps_div = body.append('div')
         .attr('class', 'container')
         .attr("id", "migration_div")
-        .attr('height', pageHeight + 300 + "px")
+        .attr('height', pageHeight  + "px")
         .style("position", "fixed") 
         .style("right", "0px") 
         .style("width", pageWidth / 2 + "px")
@@ -56,9 +56,10 @@ function setup() {
         .attr('id', 'migrationSvg')
         .style("position", "absolute") 
         .style("right", "0px")
-        .style("height", pageHeight + 100)
+        .style("height", pageHeight)
         .attr('position', 'fixed')
-        .attr("width", pageWidth / 2);
+        .attr("width", pageWidth / 2)
+        // .attr('viewBox', `0 0 ${pageWidth / 2} ${pageHeight}`);
 
     const sliderSvg = body.append('svg')
         .attr('id', 'sliderSvg')
@@ -235,25 +236,24 @@ function setup() {
     buttonElement.style.position = '150px';
     opening2.node().appendChild(buttonElement);
 
+    const utahLat = 39.3210; 
+    const utahLong = -111.0937; 
+
     const projection = d3.geoAlbers()
-    .center([0, 35.5])  // Center the map around the desired area
-    .scale(750)
-    .translate([pageWidth / 4, pageHeight / 2]);
-
-
-    // Define custom color scale for bird observation data
+        // .center([utahLong, utahLat])
+        .fitSize([pageWidth / 2, pageHeight], '')
+        .center([0, 35.5]) 
+        .translate([pageWidth / 4, pageHeight / 2])
+    
     const customColorScale = d3.scaleSequential(d3.interpolateBlues)
         .domain([-0.5, 1]);
 
-    // Create a path generator
     const pathGenerator = d3.geoPath().projection(projection);
 
-        // Define the zoom behavior
     const zoom = d3.zoom()
-        .scaleExtent([1, 8]) // Set the minimum and maximum zoom levels
-        .on('zoom', zoomed); // Define the zoom event handler
+        .scaleExtent([1, 8]) 
+        .on('zoom', zoomed); 
 
-    // Attach the zoom behavior to the SVG element
     migrationSvg.call(zoom);
 
     // Define the zoom event handler function
@@ -261,37 +261,28 @@ function setup() {
         // Get the current transformation
         const { transform } = event;
     
-        // Apply the zoom transformation to the elements you want to zoom
-        migrationSvg.selectAll('.bird-observation')
-            .attr('transform', transform);
+        // migrationSvg.selectAll('.bird-observation')
+        //     .attr('transform', transform);
         
     }
     
     function zoomToUtah() {
-        const utahLat = 39.3210; // Latitude of Utah
-        const utahLong = -111.0937; // Longitude of Utah
-        const utahScale = 100; // Adjust the scale as needed
+        const utahLat = 39.3210; 
+        const utahLong = -111.0937; 
+        const utahScale = 4.8;
     
-        // Calculate the translation coordinates to center on Utah
-        const [x, y] = projection([utahLong, utahLat]);
+        // const [x, y] = projection([utahLong, utahLat]);
     
-        // Update the projection with the new scale and translation
-        projection.scale(utahScale)
-                  .translate([pageWidth / 2 - x, pageHeight / 2 - y]);
+        // projection.scale(utahScale)
+        //     .center([utahLong, utahLat])    
+            // .translate([pageWidth / 4 - x * utahScale, pageHeight / 2 - y * utahScale]);
     
-        // Update the elements with the new projection
-        migrationSvg.selectAll('.bird-observation')
-                    .attr('d', pathGenerator); // Assuming you're using path generator for elements
-    
-        // Optionally, you can add a transition effect for smooth zooming
         migrationSvg.transition()
-                    .duration(750)
-                    .attr('transform', `translate(${pageWidth / 2},${pageHeight / 2}) scale(${utahScale})`);
+            .duration(3000)
+            .attr('transform', `translate(${pageWidth / 2},${pageHeight / 2}) scale(${utahScale})`);
     }    
 
-    // Add event listener to the button
     buttonElement.addEventListener('click', function() {
-        // Call the zoomToArea function
         zoomToUtah();
         console.log("Button clicked, zoomToArea function called.");
     });
@@ -306,9 +297,6 @@ function setup() {
         autoAnimateEasing: 'ease-out',
         // autoAnimateDuration: 1.5
     });
-
-    
-
 
     // Reveal.on( 'slidechanged', event => {
 
@@ -326,29 +314,26 @@ function setup() {
     }  
 
 
-    // Create the slider
     const slider = sliderBottom()
         .min(2004)
         .max(2023)
         .step(1)
-        .width(pageWidth / 2.5) // Adjust the width as needed
-        .tickValues(d3.range(2004, 2024, 1)) // Include all years as tick values
-        .tickFormat((d) => d) // Tick values range from 2004 to 2023
+        .width(pageWidth / 2.5) 
+        .tickValues(d3.range(2004, 2024, 1)) 
+        .tickFormat((d) => d) 
         .on('onchange', val => {
             updateSpeciesData(val)
             updateMap(val);
         });
 
-    // Append the slider to the slider SVG
     sliderSvg.append('g')
-        .attr('transform', 'translate(60,400)') // Adjust positioning as needed
+        .attr('transform', 'translate(60,400)') 
         .attr("id", "slider_group")
         .call(slider)
         .attr('class', 'slider');
 
-    // Select all ticks and style them
     sliderSvg.selectAll(".tick line")
-        .style("stroke-width", "2px") // Adjust stroke width as needed
+        .style("stroke-width", "2px") 
         .attr("y2", 10)
         .style("stroke", "black");
 
@@ -356,17 +341,14 @@ function setup() {
     let mexicoStates;
 
     function appendStateBoundaries(usStatesData, mexicoStatesData) {
-        // Append paths for US state boundaries
         migrationSvg.selectAll(".state-boundary")
             .data(usStatesData.features)
             .enter().append("path")
             .attr("class", "state-boundary")
             .attr("d", pathGenerator)
-            .style("fill", "none") // No fill for state borders
-            .style("stroke", "black") // Border color
-            .style("stroke-width", 1); // Border width
-    
-        // Append paths for Mexico state boundaries
+            .style("fill", "none") 
+            .style("stroke", "black") 
+            .style("stroke-width", 1); 
         migrationSvg.selectAll(".mexico-state-boundary")
             .data(mexicoStatesData.features)
             .enter().append("path")
@@ -377,7 +359,6 @@ function setup() {
             .style("stroke-width", 1);
     }
 
-    // Load GeoJSON data for the entire United States and Mexico
     Promise.all([
         fetch(`${globalApplicationState.current_species_data[0]}.geojson`).then(response => response.json()),
         fetch(`${globalApplicationState.current_species_data[1]}.geojson`).then(response => response.json()),
@@ -398,9 +379,11 @@ function setup() {
         console.log('US States GeoJSON data:', usStatesData);
         console.log('Mexico States GeoJSON data:', mexicoStatesData);
 
+        projection.fitSize([pageWidth / 2, pageHeight], usStatesData)
+
+
         usStates = usStatesData
         mexicoStates = mexicoStatesData
-        // Append paths for bird observation data
         migrationSvg.selectAll(".bird-observation")
             .data(utBirdData.features)
             .enter().append("path")
@@ -485,10 +468,8 @@ function setup() {
 
         migrationSvg.selectAll(".state-boundary, .mexico-state-boundary").remove();
 
-        // Append state boundaries using the global GeoJSON data variables
         appendStateBoundaries(usStates, mexicoStates);
 
-        // Fetch GeoJSON data for the specified year
         fetch(`${globalApplicationState.current_species_data[0]}.geojson`)
             .then(response => response.json())
             .then(birdData => {
