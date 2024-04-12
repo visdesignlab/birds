@@ -1,6 +1,7 @@
 // import React, { useState } from 'react';
 import * as d3 from 'd3'
 import { sliderBottom } from 'd3-simple-slider'
+import { Button } from '@mantine/core';
 
 const globalApplicationState = {
     // make this depend on what button is selected once implemented 
@@ -29,8 +30,9 @@ function setup() {
 
     // const headerSvg = header.append("svg")
     //     .attr('id', 'headerSvg')
-    //     .attr("height", 50)
+    //     .attr("height", 10)
     //     .attr("width", pageWidth);
+
 
     // const text = d3.select("#headerSvg").append("text")
     //     .attr("class", "text title")
@@ -45,41 +47,36 @@ function setup() {
     const maps_div = body.append('div')
         .attr('class', 'container')
         .attr("id", "migration_div")
-        .attr('height', pageHeight)
-        // .style("left", "0px") 
-        .style("position", "absolute") 
-        .style("top", "50px") 
-        .style("right", "0px") // Position maps_div to the right
+        .attr('height', pageHeight + 300 + "px")
+        .style("position", "fixed") 
+        .style("right", "0px") 
         .style("width", pageWidth / 2 + "px")
-        // .style("overflow", "hidden"); 
 
     const migrationSvg = maps_div.append('svg')
         .attr('id', 'migrationSvg')
         .style("position", "absolute") 
-        .style("top", "50px") 
         .style("right", "0px")
-        .attr("height", pageHeight - 50)
+        .style("height", pageHeight + 100)
+        .attr('position', 'fixed')
         .attr("width", pageWidth / 2);
 
     const sliderSvg = body.append('svg')
         .attr('id', 'sliderSvg')
-        .attr("height", pageHeight - 50)
+        .attr("height", pageHeight)
         .attr("width", pageWidth / 2)
-        .style("position", "absolute") 
-        .style("top", "50px") 
+        .style("position", "fixed") 
         .style("right", "0px") 
 
     const reveal_div = body.append('div')
         .attr('class', 'reveal')
         .attr('id', 'revealDiv')
         .style("position", "absolute") 
-        .style("top", "50px") 
+        .style("top", "5px") 
         .style("left", "0px") 
         .style("width", pageWidth / 2 + "px") 
-        .style("height", pageHeight - 50 + "px") 
-        // .style("overflow", "auto")
+        .style("height", pageHeight + "px") 
         .style("overflow", "hidden")
-        .style("background-color", "white"); 
+        .style("background-color", "#d3d3d3"); 
 
     const slides_div = reveal_div.append('div').attr('class', 'slides')
 
@@ -101,43 +98,208 @@ function setup() {
 
     // opening.append('p').attr('class', 'fragment').text('Navigating Flight Paths');
 
-    const opening = slides_div.append('section')
-        .attr('data-auto-animate', 'running')
-        .attr('id', 'animate_section')
-        .attr('data-transition', 'fade-in');
+    // const opening = slides_div.append('section')
+    //     .attr('data-auto-animate', 'running')
+    //     .attr('id', 'animate_section')
+    //     .attr('data-transition', 'fade-in');
 
-    const pElement = document.createElement('p');
-    pElement.textContent = 'Navigating Bird Migrations in a Changing Climate';
-    pElement.style.color = 'black';
-    pElement.style.fontSize = '70px';
-    pElement.classList.add('fade-in');
-    opening.node().appendChild(pElement);
+    // const pElement = document.createElement('p');
+    // pElement.textContent = 'Navigating Bird Migrations in a Changing Climate';
+    // pElement.style.color = 'black';
+    // pElement.style.fontSize = '100px';
+    // opening.node().appendChild(pElement);
     
 
-    const animate_section2 = slides_div.append('section')
+    const opening = slides_div.append('section')
         .attr('data-auto-animate', '')
         .attr('data-auto-animate', 'running')
-        .attr('id', 'animate_section2')
-        .attr('data-transition', 'fade-in');
+        .attr('id', 'animate_section')
 
-        // Text contents for the paragraph
-    const textContents = [
-        'Navigating Bird Migrations in a Changing Climate',
-        'What role does El Nino play in this?'
-        ];
+    const opening2 = slides_div.append('section')
+        .attr('data-auto-animate', '')
+        .attr('data-auto-animate', 'running')
+        .attr('id', 'animate_section2') 
 
-    textContents.forEach(text => {
-        const paragraphElement = document.createElement('p');
-        paragraphElement.textContent = text;
-        paragraphElement.style.color = 'black';
-        paragraphElement.style.fontSize = '70px';
-        paragraphElement.classList.add('fade-in');
-        animate_section2.node().appendChild(paragraphElement);
-        });
+    const title = document.createElement('p');
+    const nextTitletextContent = 'THE TALE OF TWO BIRDS: \n FINDING THE FLIGHT OF \n LEAST RESISTANCE';
+    const wrappedText = nextTitletextContent.split("\n").join("<br />");
+    title.innerHTML = wrappedText;
+    title.style.font = 'Bitstream Vera Sans Mono';
+    title.style.fontStyle = 'Italic';
+    title.style.animation = 'animate 2s linear forwards';
+    title.style.animationFillMode = 'forwards';
+    title.style.verticalAlign = 'center';
+    title.style.textAlign = 'left';
+    title.style.color = 'black';
+    title.style.fontSize = '70px';
+    title.style.paddingTop = '50px';
+    title.style.paddingLeft = '110px';
+    title.style.textOverflow = 'ellipsis'; 
+    title.style.fontWeight = 'bold';
+    opening.node().appendChild(title);
+
+    const name = document.createElement('p');
+    const nameContent = 'by: Zoe Exelbert';
+    name.innerHTML = nameContent;
+    name.style.font = 'Bitstream Vera Sans Mono';
+    name.style.fontStyle = 'Italic';
+    name.style.animation = 'animate 2s linear forwards';
+    name.style.animationFillMode = 'forwards';
+    name.style.verticalAlign = 'top';
+    name.style.textAlign = 'left';
+    name.style.color = 'black';
+    name.style.fontSize = '40px';
+    name.style.paddingLeft = '110px';
+    name.style.textOverflow = 'ellipsis'; 
+    // name.style.fontWeight = 'bold';
+    opening.node().appendChild(name);
+
+
+    const postTitle = document.createElement('p');
+    const postTitleContent = 'THE TALE OF TWO BIRDS: \n FINDING THE FLIGHT OF \n LEAST RESISTANCE';
+    const postTitleContentwrapped = postTitleContent.split("\n").join("<br />");
+    postTitle.innerHTML = postTitleContentwrapped;
+    postTitle.style.font = 'Bitstream Vera Sans Mono';
+    postTitle.style.fontStyle = 'Italic';
+    postTitle.style.animation = 'animate 2s linear forwards';
+    postTitle.style.animationFillMode = 'forwards';
+    postTitle.style.verticalAlign = 'top';
+    postTitle.style.textAlign = 'left';
+    postTitle.style.color = 'black';
+    postTitle.style.fontSize = '70px';
+    // postTitle.style.paddingTop = '50px';
+    postTitle.style.paddingLeft = '110px';
+    postTitle.style.textOverflow = 'ellipsis'; 
+    postTitle.style.fontWeight = 'bold';
+    opening2.node().appendChild(postTitle);
+
+    const name2 = document.createElement('p');
+    const name2Content = 'by: Zoe Exelbert';
+    name2.innerHTML = name2Content;
+    name2.style.font = 'Bitstream Vera Sans Mono';
+    name2.style.fontStyle = 'Italic';
+    name2.style.animation = 'animate 2s linear forwards';
+    name2.style.animationFillMode = 'forwards';
+    name2.style.verticalAlign = 'top';
+    name2.style.textAlign = 'left';
+    name2.style.color = 'black';
+    name2.style.fontSize = '35px';
+    name2.style.paddingLeft = '110px';
+    name2.style.textOverflow = 'ellipsis'; 
+    name2.style.fontWeight = 'bold';
+    // opening2.node().appendChild(name2);
+
+
+    const info = document.createElement('p');
+    const infoContent = 'Bird migrations have evolved over time as a natural response \n to finding available resources and comfortable environments. \n However, climate change might be forcing these responses to \n occur more frequently, and perhaps unnaturally.';
+    const infoContentwrapped = infoContent.split("\n").join("<br />");
+    info.innerHTML = infoContentwrapped;
+    info.style.font = 'Bitstream Vera Sans Mono';
+    info.style.fontStyle = 'Italic';
+    info.style.animation = 'animate 2s linear forwards';
+    info.style.animationFillMode = 'forwards';
+    info.style.verticalAlign = 'top';
+    info.style.textAlign = 'left';
+    info.style.color = 'black';
+    info.style.fontSize = '20px';
+    info.style.paddingLeft = '110px';
+    info.style.textOverflow = 'ellipsis'; 
+    // info.style.fontWeight = 'bold';
+    // info.className = 'fade-in';    
+    opening2.node().appendChild(info);
+
+    const info2 = document.createElement('p');
+    const info2Content = 'Here we will explore the migrations of the Eared Grebe and \n the American White Pelican as they travel to the Great Salt \n Lake over the past 20 years.';
+    const info2Contentwrapped = info2Content.split("\n").join("<br />");
+    info2.innerHTML = info2Contentwrapped;
+    info2.style.font = 'Bitstream Vera Sans Mono';
+    info2.style.fontStyle = 'Italic';
+    info2.style.animation = 'animate 2s linear forwards';
+    info2.style.animationFillMode = 'forwards';
+    info2.style.verticalAlign = 'top';
+    info2.style.textAlign = 'left';
+    info2.style.color = 'black';
+    info2.style.fontSize = '20px';
+    info2.style.paddingLeft = '110px';
+    info2.style.textOverflow = 'ellipsis'; 
+    info.className = 'fade-in';    
+    // info2.style.fontWeight = 'bold';
+    opening2.node().appendChild(info2);
+    
+    const buttonElement = document.createElement('button');
+    buttonElement.textContent = 'Start Flying';
+    // buttonElement.setAttribute('data-mantine', 'Button')
+    buttonElement.style.fontSize = '14px'; 
+    buttonElement.style.backgroundColor = 'blue'; 
+    buttonElement.style.color = 'white';
+    buttonElement.style.position = '150px';
+    opening2.node().appendChild(buttonElement);
+
+    const projection = d3.geoAlbers()
+    .center([0, 35.5])  // Center the map around the desired area
+    .scale(750)
+    .translate([pageWidth / 4, pageHeight / 2]);
+
+
+    // Define custom color scale for bird observation data
+    const customColorScale = d3.scaleSequential(d3.interpolateBlues)
+        .domain([-0.5, 1]);
+
+    // Create a path generator
+    const pathGenerator = d3.geoPath().projection(projection);
+
+        // Define the zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8]) // Set the minimum and maximum zoom levels
+        .on('zoom', zoomed); // Define the zoom event handler
+
+    // Attach the zoom behavior to the SVG element
+    migrationSvg.call(zoom);
+
+    // Define the zoom event handler function
+    function zoomed(event) {
+        // Get the current transformation
+        const { transform } = event;
+    
+        // Apply the zoom transformation to the elements you want to zoom
+        migrationSvg.selectAll('.bird-observation')
+            .attr('transform', transform);
+        
+    }
+    
+    function zoomToUtah() {
+        const utahLat = 39.3210; // Latitude of Utah
+        const utahLong = -111.0937; // Longitude of Utah
+        const utahScale = 100; // Adjust the scale as needed
+    
+        // Calculate the translation coordinates to center on Utah
+        const [x, y] = projection([utahLong, utahLat]);
+    
+        // Update the projection with the new scale and translation
+        projection.scale(utahScale)
+                  .translate([pageWidth / 2 - x, pageHeight / 2 - y]);
+    
+        // Update the elements with the new projection
+        migrationSvg.selectAll('.bird-observation')
+                    .attr('d', pathGenerator); // Assuming you're using path generator for elements
+    
+        // Optionally, you can add a transition effect for smooth zooming
+        migrationSvg.transition()
+                    .duration(750)
+                    .attr('transform', `translate(${pageWidth / 2},${pageHeight / 2}) scale(${utahScale})`);
+    }    
+
+    // Add event listener to the button
+    buttonElement.addEventListener('click', function() {
+        // Call the zoomToArea function
+        zoomToUtah();
+        console.log("Button clicked, zoomToArea function called.");
+    });
 
 
     Reveal.initialize({
         view: 'scroll',
+        // center: 'false',
         scrollProgress: false,
         scrollLayout: 'full',
         // backgroundTransition: 'slide',
@@ -189,34 +351,6 @@ function setup() {
         .style("stroke-width", "2px") // Adjust stroke width as needed
         .attr("y2", 10)
         .style("stroke", "black");
-
-    // Create a D3 projection focusing on the US and Mexico
-    const projection = d3.geoAlbers()
-        .center([0, 33])  // Center the map around the desired area
-        .scale(2500)
-        .translate([pageWidth / 4, pageHeight / 2]);
-
-        // Define the zoom behavior
-    // const zoom = d3.zoom()
-    //     .scaleExtent([1, 8]) // Set the zoom extent
-    //     .on('zoom', zoomed); // Call the zoomed function when zoom event occurs
-
-    // // Apply the zoom behavior to the migration SVG container
-    // migrationSvg.call(zoom);
-
-    // // Define the zoomed function
-    // function zoomed(event) {
-    //     // Update the transformation of the container group
-    //     migrationSvg.select('g').attr('transform', event.transform);
-    // }
-
-
-    // Define custom color scale for bird observation data
-    const customColorScale = d3.scaleSequential(d3.interpolateBlues)
-        .domain([-0.5, 1]);
-
-    // Create a path generator
-    const pathGenerator = d3.geoPath().projection(projection);
 
     let usStates;
     let mexicoStates;
