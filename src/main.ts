@@ -278,8 +278,8 @@ function setup() {
         .domain([0, 1]);
 
         function createColorLegend(colorScale) {
-            const legendWidth = 20; 
-            const legendHeight = 200; 
+            const legendWidth = 50; 
+            const legendHeight = 300; 
             const numTicks = 5; 
         
             const legendScale = d3.scaleLinear()
@@ -288,7 +288,7 @@ function setup() {
 
             const legend = migrationSvg.append("g")
                 .attr("class", "legend")
-                .attr("transform", "translate(560,330)"); 
+                .attr("transform", "translate(1130,730)"); 
 
             legend.selectAll("rect")
                 .data(d3.range(0, 1.01, 0.01)) 
@@ -321,6 +321,7 @@ function setup() {
                 .attr("y", d => legendScale(d))
                 .attr("dy", "0.35em")
                 .attr("text-anchor", "start")
+                .style("font-size", "25px") 
                 .text(d => tickFormat(d));
         }
         
@@ -342,13 +343,13 @@ function setup() {
 
     const zoomIcon = migrationSvg.append("g")
         .attr("class", "zoom-icon")
-        .attr("transform", "translate(-50, 280)")
+        .attr("transform", "translate(-90, 580)")
         .classed("flip-horizontal", true);
 
    zoomIcon.append("image")
         .attr("xlink:href", "src/Untitled.jpeg") 
-        .attr("width", 150) 
-        .attr("height", 300) 
+        .attr("width", 300) 
+        .attr("height", 600) 
         .on("click", zoomIn) 
         .style("cursor", "pointer");
 
@@ -772,10 +773,6 @@ function setup() {
     //     .style("stroke-width", "2px") // Adjust stroke width as needed
     //     .attr("y2", 10)
     //     .style("stroke", "black");
-
-
-    
-
 
 
 
