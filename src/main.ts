@@ -77,7 +77,7 @@ function setup() {
         .style('font-size', '30px')
         .style('font-weight', 'bold')
         .style("fill", "white")
-        .style('transform', 'translateX(2000px)');
+        .style('transform', `translateX(2000px)`);
     
     const slides_div = reveal_div.append('div')
 
@@ -188,80 +188,119 @@ function setup() {
         .style('padding-top', '2vh') 
         .style('padding-left', '13vw') 
 
-    // const earedGrebe5 = slides_div.append('p')
-    //     .text('What Effects Can This Have?')
-    //     .style('font-family', 'Schotis Text Book')
-    //     .style('vertical-align', 'center')
-    //     .style('text-align', 'left')
-    //     .style('color', 'black')
-    //     .style('font-size', '1.3vw') 
-    //     .style('padding-top', '2vh') 
-    //     .style('padding-left', '13vw') 
+    const earedGrebe5 = slides_div.append('p')
+        .text('**Animation with sliders? to show how when temperatures rises at GSL (Utah becomes red?), salinity rises, brine shrimp populations suffer, as a result eared grebe populations do.**')
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '5vw') 
+
+    const amp = slides_div.append('p')
+        .text("The world's second largest colony of American White Pelicans exist on GSL's Gunnison Island. Fossil evidence suggest that this species has come to the GSL to nest for over 125,000 years.")
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '5vw') 
+
+    const amp2 = slides_div.append('p')
+        .text("While Pelicans forage in freshwater wetlands surrounding the GSL, Gunnisoin Island hosts a safe environment for pelicans to breed and nest. (Point out island on map)")
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '5vw') 
+
+    const amp3 = slides_div.append('p')
+        .text("**Animation with sliders? to show how when temperatures rise at GSL, lake levels drop, increasing predation access, leading to decreased nesting success, and as a result potentially decreased Pelican counts.**")
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '5vw') 
+
+    const amp4 = slides_div.append('p')
+        .text("So what's been happening with these species over the past 20 years? **Button to trigger animation of migration, potentially with the option to switch species to see Grebe and Pelican animation separately?**")
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '5vw') 
 
         
     const utahLat = 39.3210; 
     const utahLong = -111.0937; 
 
-    const projection = d3.geoAlbers()
-        .translate([(pageWidth / 4) + 100, pageHeight / 2])
-    
     const customColorScale = d3.scaleSequential(d3.interpolateBlues)
         .domain([0, 1]);
 
-        function createColorLegend(colorScale) {
-            const legendWidth = pageWidth / 30; 
-            const legendHeight = pageHeight / 3; 
-            const numTicks = 5; 
-        
-            const legendScale = d3.scaleLinear()
-                .domain([0, 1])
-                .range([legendHeight, 0]); 
+    function createColorLegend(colorScale) {
+        const legendWidth = pageWidth / 30; 
+        const legendHeight = pageHeight / 3; 
+        const numTicks = 5; 
+    
+        const legendScale = d3.scaleLinear()
+            .domain([0, 1])
+            .range([legendHeight, 0]); 
 
-            const legend = migrationSvg.append("g")
-                .attr("class", "legend")
-                .attr("transform", `translate(${pageWidth / 2.25}, ${pageHeight / 1.7})`); 
+        const legend = migrationSvg.append("g")
+            .attr("class", "legend")
+            .attr("transform", `translate(${pageWidth / 2.25}, ${pageHeight / 1.9})`); 
 
-            legend.selectAll("rect")
-                .data(d3.range(0, 1.01, 0.01)) 
-                .enter().append("rect")
-                .attr("x", 0)
-                .attr("y", d => legendScale(d))
-                .attr("width", legendWidth)
-                .attr("height", legendHeight / 100) 
-                .style("fill", d => colorScale(d));
-        
-            const tickValues = d3.range(0, 1.01, 0.2); 
-            const tickFormat = d3.format(".1f");
-            const tickHeight = legendHeight / numTicks;
-        
-            legend.selectAll(".tick")
-                .data(tickValues)
-                .enter().append("line")
-                .attr("class", "tick")
-                .attr("x1", legendWidth)
-                .attr("y1", d => legendScale(d))
-                .attr("x2", legendWidth + 6) 
-                .attr("y2", d => legendScale(d))
-                .style("stroke", "black")
-                .style('font-weight', 'bold')
+        legend.selectAll("rect")
+            .data(d3.range(0, 1.01, 0.01)) 
+            .enter().append("rect")
+            .attr("x", 0)
+            .attr("y", d => legendScale(d))
+            .attr("width", legendWidth)
+            .attr("height", legendHeight / 100) 
+            .style("fill", d => colorScale(d));
+    
+        const tickValues = d3.range(0, 1.01, 0.2); 
+        const tickFormat = d3.format(".1f");
+        const tickHeight = legendHeight / numTicks;
+    
+        legend.selectAll(".tick")
+            .data(tickValues)
+            .enter().append("line")
+            .attr("class", "tick")
+            .attr("x1", legendWidth)
+            .attr("y1", d => legendScale(d))
+            .attr("x2", legendWidth + 6) 
+            .attr("y2", d => legendScale(d))
+            .style("stroke", "black")
+            .style('font-weight', 'bold')
 
-                
-        
-            legend.selectAll(".tick-label")
-                .data(tickValues)
-                .enter().append("text")
-                .attr("class", "tick-label")
-                .attr("x", legendWidth + 13) 
-                .attr("y", d => legendScale(d))
-                .attr("dy", "0.35em")
-                .attr("text-anchor", "start")
-                .style("font-size", "25px") 
-                // .style('font-weight', 'bold')
-                .text(d => tickFormat(d));
-        }
-        
-        createColorLegend(customColorScale);
+    
+        legend.selectAll(".tick-label")
+            .data(tickValues)
+            .enter().append("text")
+            .attr("class", "tick-label")
+            .attr("x", legendWidth + 13) 
+            .attr("y", d => legendScale(d))
+            .attr("dy", "0.35em")
+            .attr("text-anchor", "start")
+            .style("font-size", "25px") 
+            // .style('font-weight', 'bold')
+            .text(d => tickFormat(d));
+    }
+    
+    createColorLegend(customColorScale);
 
+    const projection = d3.geoAlbers()
+        .translate([(pageWidth / 4) + 100, pageHeight / 2])
+    
     const pathGenerator = d3.geoPath().projection(projection);
 
     const zoom = d3.zoom()
