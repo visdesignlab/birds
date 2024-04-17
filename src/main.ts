@@ -117,7 +117,7 @@ function setup() {
         // .style("top", "5px") 
         // .style("left", "0px") 
         .style("width", pageWidth / 2 + "px") 
-        .style("height", pageHeight - 40 + "px") 
+        .style("height", pageHeight - 80 + "px") 
         .style("overflow", "hidden")
         .style("background-color", "#d3d3d3")
         .style('margin', '10px'); 
@@ -366,10 +366,10 @@ function setup() {
         .on('zoom', zoomed); 
 
     migrationSvg.call(zoom);
-
+    
     function zoomed(event) {
         const { transform } = event;
-        migrationSvg.attr("transform", transform)
+        d3.select('.pathsG').attr("transform", transform)
         console.log(event)
     }
 
@@ -389,7 +389,7 @@ function setup() {
    
     function zoomIn() {
         migrationSvg.transition().duration(500)
-            
+
     }
     
 
@@ -415,16 +415,6 @@ function setup() {
 
     console.log(globalApplicationState.all_data)
     
-    Reveal.initialize({
-        view: 'scroll',
-        // center: 'false',
-        scrollProgress: false,
-        scrollLayout: 'full',
-        backgroundTransition: 'slide',
-        autoAnimateEasing: 'ease-out',
-        // autoAnimateDuration: 1.5
-    });
-
     // Reveal.on( 'slidechanged', event => {
 
     //     const val = event.currentSlide.className.split("-")[1].split(" ")[0]
@@ -459,7 +449,10 @@ function setup() {
 
         // migrationSvg.selectAll().remove();
 
-        migrationSvg.selectAll(".bird-observation")
+        
+        const pathsG = migrationSvg.append('g').attr('class', 'pathsG')
+
+        pathsG.selectAll(".bird-observation")
             .data(utBirdData.features)
             .enter().append("path")
             .attr("class", "bird-observation")
@@ -492,7 +485,7 @@ function setup() {
                     .style("opacity", 0);
             });
 
-        migrationSvg.selectAll(".nv-bird-observation")
+            pathsG.selectAll(".nv-bird-observation")
             .data(nvBirdData.features)
             .enter().append("path")
             .attr("class", "nv-bird-observation")
@@ -506,7 +499,7 @@ function setup() {
                     return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
                 }
             });
-        migrationSvg.selectAll(".mex-bird-observation")
+            pathsG.selectAll(".mex-bird-observation")
             .data(mexBirdData.features)
             .enter().append("path")
             .attr("class", "mex-bird-observation")
@@ -521,7 +514,7 @@ function setup() {
                 }
             });
 
-        migrationSvg.selectAll(".ca-bird-observation")
+            pathsG.selectAll(".ca-bird-observation")
             .data(caBirdData.features)
             .enter().append("path")
             .attr("class", "ca-bird-observation")
@@ -536,7 +529,7 @@ function setup() {
                 }
             });
 
-        migrationSvg.selectAll(".az-bird-observation")
+            pathsG.selectAll(".az-bird-observation")
             .data(azBirdData.features)
             .enter().append("path")
             .attr("class", "az-bird-observation")
@@ -591,7 +584,9 @@ function setup() {
     let mexicoStates;
 
     function appendStateBoundaries(usStatesData, mexicoStatesData) {
-        migrationSvg.selectAll(".state-boundary")
+        const pathsG = d3.select('.pathsG')
+
+        pathsG.selectAll(".state-boundary")
             .data(usStatesData.features)
             .enter().append("path")
             .attr("class", "state-boundary")
@@ -599,7 +594,7 @@ function setup() {
             .style("fill", "none") 
             .style("stroke", "black") 
             .style("stroke-width", 1); 
-        migrationSvg.selectAll(".mexico-state-boundary")
+            pathsG.selectAll(".mexico-state-boundary")
             .data(mexicoStatesData.features)
             .enter().append("path")
             .attr("class", "mexico-state-boundary")
