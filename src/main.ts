@@ -12,7 +12,7 @@ const globalApplicationState = {
     current_year_selection : ''
 }
 
-globalApplicationState.current_species_data = [`${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species[0]}_ut_3_2023`, 
+globalApplicationState.current_species_data = [`${globalApplicationState.current_states[0]}/plot_${globalApplicationState.current_species[0]}_ut_5_2023`, 
 `${globalApplicationState.current_states[1]}/plot_${globalApplicationState.current_species[0]}_nv_5_2023`,
 `${globalApplicationState.current_states[2]}/plot_${globalApplicationState.current_species[0]}_mx_5_2023`,
 `${globalApplicationState.current_states[3]}/plot_${globalApplicationState.current_species[0]}_ca_5_2023`,
@@ -25,11 +25,12 @@ function setup() {
     const body = d3.select('body')
     body.style("background-color", "white");
 
-    // const header = body.append('div')
-    //     .attr('class', 'header')
-    //     .attr("id", "header")
-    //     .attr('height', 40)
-    //     .style("z-index", "2000");
+    const header = body.append('div')
+        .attr('class', 'header')
+        .attr("id", "header")
+        .attr('height', '40px')
+        .attr('width', pageWidth)
+        // .style("z-index", "2000");
 
     // const headerSvg = header.append("svg")
     //     .attr('id', 'headerSvg')
@@ -62,7 +63,45 @@ function setup() {
         .attr("width", pageWidth / 2)
         .style('margin', '20px')
         .style('margin-bottom', '190px')
-        .attr("viewBox", `0 0 ${pageWidth / 2} ${pageHeight + margin}`)
+        .attr("viewBox", `0 0 ${pageWidth / 2 + 70} ${pageHeight + margin}`)
+
+    const buttonGroup = header.append("g")
+        .attr("class", "button-group")
+        .style('position', 'absolute')
+        .style('top', '0px')
+        .style('left', '0px')
+
+
+        // .attr('x', pageWidth)
+        // .attr('y', pageHeight)
+        .attr("transform", `translate(${pageWidth / 2.2})`); 
+    
+    buttonGroup.append("rect")
+        .attr("width", 140)
+        .attr("height", 35)
+        .attr("rx", 10) // Border radius
+        .style("fill", "#0F579F")
+        .style("stroke", "white")
+        .style('position', 'absolute')
+        .style('top', '0px')
+        .style('left', '0px');
+
+        // .style("stroke-width", 2);
+    
+    buttonGroup.append("text")
+        .attr("x", 70) 
+        .attr("y", 20) 
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .style("font-size", "25px")
+        .style('font-weight', 'bold')
+        .style("fill", "white")
+        .text("ABOUT");
+    
+    buttonGroup.on("click", function() {
+        console.log("Start Flying button clicked!");
+    });
+
 
     // const sliderSvg = body.append('svg')
     //     .attr('id', 'sliderSvg')
@@ -74,14 +113,26 @@ function setup() {
     const reveal_div = body.append('div')
         .attr('class', 'reveal')
         .attr('id', 'revealDiv')
-        .style("position", "absolute") 
-        .style("top", "5px") 
-        .style("left", "0px") 
+        // .style("position", "absolute") 
+        // .style("top", "5px") 
+        // .style("left", "0px") 
         .style("width", pageWidth / 2 + "px") 
-        .style("height", pageHeight + "px") 
+        .style("height", pageHeight - 40 + "px") 
         .style("overflow", "hidden")
         .style("background-color", "#d3d3d3")
         .style('margin', '10px'); 
+
+     header.append('div')
+        .text('GSLBirdVis')
+        .style('color', 'black')
+        .style('font-size', '50px')
+        .style('font-family', 'Bitstream Vera Sans Mono')
+        .style('font-weight', 'bold')
+        .attr('class', 'stay-text')
+        .style('background-color', 'white')
+        // .style('font-style', 'italic')
+        .style('top', '0px')
+        .style('right', '0px');
 
     const slides_div = reveal_div.append('div').attr('class', 'slides')
 
@@ -90,30 +141,6 @@ function setup() {
     //     .attr('data-background-iframe', 'https://tenor.com/view/living-color-tribe-edition-ayia-napa-living-color-tribe-edition-kaz-james-gif-26151239')
     //     .attr('data-background-interactive', '')
 
-    // const opening = slides_div.append('section')
-    //     .attr('data-auto-animate', 'running')
-    //     .attr('id', 'animate_section')
-    //     .attr('data-transition', 'fade-in')
-    //     .append('h1')
-    //     .style('color', 'black')
-    //     .text('Navigating Bird Migrations in a Changing Climate')
-    //     .style('font-size', '70px')
-    //     .style('fill', 'black')
-    //     .classed('fade-in', true); // Make sure to specify the fill color
-
-    // opening.append('p').attr('class', 'fragment').text('Navigating Flight Paths');
-
-    // const opening = slides_div.append('section')
-    //     .attr('data-auto-animate', 'running')
-    //     .attr('id', 'animate_section')
-    //     .attr('data-transition', 'fade-in');
-
-    // const pElement = document.createElement('p');
-    // pElement.textContent = 'Navigating Bird Migrations in a Changing Climate';
-    // pElement.style.color = 'black';
-    // pElement.style.fontSize = '100px';
-    // opening.node().appendChild(pElement);
-    
 
     const opening = slides_div.append('section')
         .attr('data-auto-animate', '')
@@ -226,21 +253,22 @@ function setup() {
 
     
     function navigateToNextSlide() {
+        console.log('button clicked')
         Reveal.next(); 
       }
 
         // Create a new section for the additional slide
-    // const additionalSlide = slides_div.append('section')
-    // //     .attr('data-auto-animate', 'running')
-    //     .attr('data-auto-animate-id', 'additional_slide') // Unique ID for the new slide
-    //     // .attr('data-auto-animate-restart', '') // Prevent auto-animate with the previous slide
-    //     // .style('position', 'relative');
+    const additionalSlide = slides_div.append('section')
+    //     .attr('data-auto-animate', 'running')
+        .attr('data-auto-animate-id', 'additional_slide') // Unique ID for the new slide
+        // .attr('data-auto-animate-restart', '') // Prevent auto-animate with the previous slide
+        // .style('position', 'relative');
 
-    // // // Add content to the new slide
-    // const additionalTitle = document.createElement('p');
-    // additionalTitle.textContent = 'Additional Slide Content';
-    // // Add any additional content you want for the new slide
-    // additionalSlide.node().appendChild(additionalTitle);
+    // // Add content to the new slide
+    const additionalTitle = document.createElement('p');
+    additionalTitle.textContent = 'Additional Slide Content';
+    // Add any additional content you want for the new slide
+    additionalSlide.node().appendChild(additionalTitle);
 
 
     buttonElement.addEventListener('click', navigateToNextSlide);
@@ -278,8 +306,8 @@ function setup() {
         .domain([0, 1]);
 
         function createColorLegend(colorScale) {
-            const legendWidth = 50; 
-            const legendHeight = 300; 
+            const legendWidth = pageWidth / 30; 
+            const legendHeight = pageHeight / 3; 
             const numTicks = 5; 
         
             const legendScale = d3.scaleLinear()
@@ -288,7 +316,7 @@ function setup() {
 
             const legend = migrationSvg.append("g")
                 .attr("class", "legend")
-                .attr("transform", "translate(1130,730)"); 
+                .attr("transform", `translate(${pageWidth / 2.2}, ${pageHeight / 1.6})`); 
 
             legend.selectAll("rect")
                 .data(d3.range(0, 1.01, 0.01)) 
@@ -311,7 +339,10 @@ function setup() {
                 .attr("y1", d => legendScale(d))
                 .attr("x2", legendWidth + 6) 
                 .attr("y2", d => legendScale(d))
-                .style("stroke", "black");
+                .style("stroke", "black")
+                .style('font-weight', 'bold')
+
+                
         
             legend.selectAll(".tick-label")
                 .data(tickValues)
@@ -322,6 +353,7 @@ function setup() {
                 .attr("dy", "0.35em")
                 .attr("text-anchor", "start")
                 .style("font-size", "25px") 
+                // .style('font-weight', 'bold')
                 .text(d => tickFormat(d));
         }
         
@@ -343,13 +375,14 @@ function setup() {
 
     const zoomIcon = migrationSvg.append("g")
         .attr("class", "zoom-icon")
-        .attr("transform", "translate(-90, 580)")
+        .attr("transform", `translate(-10, ${pageHeight / 3})`)
         .classed("flip-horizontal", true);
 
    zoomIcon.append("image")
-        .attr("xlink:href", "src/Untitled.jpeg") 
-        .attr("width", 300) 
-        .attr("height", 600) 
+        .attr("xlink:href", "src/123411833-front-view-of-a-pair-of-large-grey-binoculars-with-light-blue-lens-vector-color-drawing-or.jpg") 
+        .style('background', 'transparent')
+        .attr("width", pageWidth / 9) 
+        .attr("height", pageHeight) 
         .on("click", zoomIn) 
         .style("cursor", "pointer");
 
@@ -374,10 +407,10 @@ function setup() {
         draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)    
     }    
 
-    // buttonElement.addEventListener('click', function() {
-    //     zoomToUtah();
-    //     console.log("Button clicked, zoomToArea function called.");
-    // });
+    buttonElement.addEventListener('click', function() {
+        zoomToUtah();
+        console.log("Button clicked, zoomToArea function called.");
+    });
 
 
     console.log(globalApplicationState.all_data)
