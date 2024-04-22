@@ -49,7 +49,7 @@ function setup() {
         .style("height", pageHeight)
         .attr('position', 'fixed')
         .attr("width", pageWidth / 2)
-        .style('margin-top', '60px')
+        // .style('margin-top', '60px')
 
     migrationSvg.append('g').attr('class', 'pathsG')
 
@@ -74,6 +74,8 @@ function setup() {
         .style('font-family', 'Bitstream Vera Sans Mono')
         .style('font-weight', 'bold')
         .style('background-color', 'white')
+        .style('display', 'flex')
+        .style('justify-content', 'space-between')
 
     visName.append("button")
         .attr("width", 500)
@@ -85,19 +87,23 @@ function setup() {
         .style('font-size', '30px')
         .style('font-weight', 'bold')
         .style("fill", "white")
-        .style('transform', `translateX(2000px)`);
+        .style('margin-right', '60px')
+        .style('margin-top', '10px')
+        .style('margin-bottom', '10px')
+        // .style('margin', '10px')
+        // .style('transform', `translateX(2000px)`);
 
-    const zoomButton = visName.append("button")
-        .attr("width", 500)
-        .attr("height", 50)
-        .text("ZOOM") 
-        .attr("rx", 10) // Border radius
-        .style("fill", "#0F579F")
-        .style("stroke", "white")
-        .style('font-size', '30px')
-        .style('font-weight', 'bold')
-        .style("fill", "white")
-        .on('click', zoomToUtah)
+    // const zoomButton = visName.append("button")
+    //     .attr("width", 500)
+    //     .attr("height", 50)
+    //     .text("ZOOM") 
+    //     .attr("rx", 10) // Border radius
+    //     .style("fill", "#0F579F")
+    //     .style("stroke", "white")
+    //     .style('font-size', '30px')
+    //     .style('font-weight', 'bold')
+    //     .style("fill", "white")
+    //     .on('click', zoomToUtah)
         // .style('transform', `translateX(2000px)`);
     
     
@@ -317,8 +323,8 @@ function setup() {
         .domain([0, 1]);
 
     function createColorLegend(colorScale) {
-        const legendWidth = pageWidth / 30; 
-        const legendHeight = pageHeight / 3; 
+        const legendWidth = 50; 
+        const legendHeight = 250; 
         const numTicks = 5; 
     
         const legendScale = d3.scaleLinear()
@@ -327,7 +333,7 @@ function setup() {
 
         const legend = migrationSvg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${pageWidth / 2.25}, ${pageHeight / 2.1})`); 
+            .attr("transform", `translate(${legendWidth - 50}, ${pageHeight - legendHeight})`); 
 
         legend.selectAll("rect")
             .data(d3.range(0, 1.01, 0.01)) 
@@ -390,62 +396,6 @@ function setup() {
         console.log(event);
     }
 
-    // function triggerZoom() {
-    //     // Calculate the desired transformation (e.g., scale and translate)
-    //     const transform = d3.zoomIdentity.scale(200).translate(100, 100); // Example transformation
-        
-    //     // Apply the transformation to your SVG element
-    //     migrationSvg.transition().duration(500) // Optionally add a smooth transition
-    //         .call(zoom.transform, transform);
-    // }
-    
-    // function zoomed() {
-    //     if (d3.event && d3.event.transform) {
-    //         const { x, y, k } = d3.event.transform;
-    
-    //         // Coordinates of Utah
-    //         const utahLat = 39.3210; 
-    //         const utahLong = -111.0937; 
-    
-    //         // Calculate translation to center Utah
-    //         const translateX = pageWidth / 2 - utahLong * k;
-    //         const translateY = pageHeight / 2 - utahLat * k;
-    
-    //         // Apply the transformation
-    //         d3.select('.map-container')
-    //             .attr('transform', `translate(${translateX}, ${translateY}) scale(${k})`);
-    //     }
-    // }
-    
-    // function zoomIn() {
-    //     migrationSvg.transition().duration(500)
-    // }
-
-    // function zoomToUtah() {
-    //     const utahFeature = globalApplicationState.all_data[0].features.find(feature => feature.properties.name === "Utah");
-    //     console.log(utahFeature)
-    
-    //     const utahBounds = pathGenerator.bounds(utahFeature);
-    //     const utahCenter = pathGenerator.centroid(utahFeature);
-    
-    //     // Calculate the scale to fit Utah into the visualization
-    //     const utahScale = 0.9 / Math.max(
-    //         (utahBounds[1][0] - utahBounds[0][0]) / (pageWidth / 2),
-    //         (utahBounds[1][1] - utahBounds[0][1]) / pageHeight
-    //     );
-    
-    //     // Calculate the translate coordinates to center Utah
-    //     const utahTranslate = [
-    //         (pageWidth / 2) - (utahCenter[0] * utahScale),
-    //         (pageHeight / 2) - (utahCenter[1] * utahScale)
-    //     ];
-    
-    //     // Apply the zoom transform to zoom to Utah
-    //     migrationSvg.transition().duration(750).call(
-    //         zoom.transform,
-    //         d3.zoomIdentity.translate(utahTranslate[0], utahTranslate[1]).scale(utahScale)
-    //     );
-    // }
 
     function zoomToUtah() {
         const utahLat = 39.3210; 
@@ -461,18 +411,6 @@ function setup() {
         draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)    
     }    
 
-    // zoomButton.addEventListener('click', function() {
-    //     zoomToUtah();
-    //     console.log("Button clicked, zoomToArea function called.");
-    // });
-    
-    // Reveal.on( 'slidechanged', event => {
-
-    //     const val = event.currentSlide.className.split("-")[1].split(" ")[0]
-    //     updateSpeciesData(val)
-    //     updateMap(val);
-    // } );
-
 
     function draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator) {
 
@@ -481,21 +419,25 @@ function setup() {
 
         // migrationSvg.selectAll().remove();
         
-        const pathsG = migrationSvg.select('.pathsG')
-        console.log('in draw')
+        const pathsG = migrationSvg.select('.pathsG');
+
         pathsG.selectAll(".bird-observation")
             .data(utBirdData.features)
             .join(
-                enter => {console.log('hello'); return enter.append("path")},
-                update => {console.log('update?'); return update},
-                exit => exit.remove()
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
             )
             .attr("class", "bird-observation")
-            .transition().duration(4000)
+            .transition().duration(500)
             .attr("d", pathGenerator)
+            .delay((d, i) => i * 3)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
-                    return 'none'; // No data, same color as background
+                    return 'white'; // No data, same color as background
                 } else {
                     const value = +d.properties.eargre; // Convert to number
                     // Map values close to 0 to a color closer to the background
@@ -503,7 +445,7 @@ function setup() {
                 }
             });
 
-        pathsG.selectAll(".nv-bird-observation")
+            pathsG.selectAll(".nv-bird-observation")
             .data(nvBirdData.features)
             .join("path")
             .attr("class", "nv-bird-observation")
@@ -631,7 +573,7 @@ function setup() {
             .style("stroke-width", 1); 
         pathsG.selectAll(".mexico-state-boundary")
             .data(mexicoStatesData.features)
-            .join("path").transition()
+            .join("path")
             .attr("class", "mexico-state-boundary")
             .transition().duration(4000)
             .attr("d", pathGenerator)
