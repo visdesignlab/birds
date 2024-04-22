@@ -21,6 +21,7 @@ globalApplicationState.current_species_data = [`${globalApplicationState.current
 const pageWidth = window.innerWidth - 40 || document.documentElement.clientWidth || document.body.clientWidth;
 const pageHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
+
 function setup() {
     const body = d3.select('body')
     body.style("background-color", "white");
@@ -48,6 +49,13 @@ function setup() {
         .style("height", pageHeight)
         .attr('position', 'fixed')
         .attr("width", pageWidth / 2)
+        .style('margin-top', '60px')
+
+    migrationSvg.append('g').attr('class', 'pathsG')
+
+    const projection = d3.geoAlbers()
+        // .translate([(pageWidth / 4), pageHeight / 9])
+        // .scale(20000)
 
 
     const reveal_div = body.append('div')
@@ -67,7 +75,7 @@ function setup() {
         .style('font-weight', 'bold')
         .style('background-color', 'white')
 
-        visName.append("button")
+    visName.append("button")
         .attr("width", 500)
         .attr("height", 50)
         .text("ABOUT") 
@@ -78,6 +86,20 @@ function setup() {
         .style('font-weight', 'bold')
         .style("fill", "white")
         .style('transform', `translateX(2000px)`);
+
+    const zoomButton = visName.append("button")
+        .attr("width", 500)
+        .attr("height", 50)
+        .text("ZOOM") 
+        .attr("rx", 10) // Border radius
+        .style("fill", "#0F579F")
+        .style("stroke", "white")
+        .style('font-size', '30px')
+        .style('font-weight', 'bold')
+        .style("fill", "white")
+        .on('click', zoomToUtah)
+        // .style('transform', `translateX(2000px)`);
+    
     
     const slides_div = reveal_div.append('div')
 
@@ -113,7 +135,7 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
-
+        .attr('class', 'element')
 
     const opening2 = slides_div.append('p')
         .text('Here we will explore the migrations of the Eared Grebe and the American White Pelican as they travel to the Great Salt Lake over the past 20 years.')
@@ -124,14 +146,58 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
+        .attr('class', 'element')
 
         // Create a paragraph element
-    const gifP = slides_div.append('p');
+    const gifP = slides_div.append('p')
+        .style('text-align', 'center');
+
+    const gifPosition = gifP.node().getBoundingClientRect().top + window.scrollY;
+
+    function bringTextIntoFocus(element) {
+        element.style.opacity = '1';
+    }
+    
+    function turnTextOutOfFocus(element) {
+        element.style.fontWeight = 'normal';
+        element.style.opacity = '0.5';
+    }
+    
+    function isInViewport(element) {
+        const bounding = element.getBoundingClientRect();
+        return (
+            bounding.top >= 0 &&
+            bounding.left >= 0 &&
+            bounding.bottom <= (window.innerHeight) &&
+            bounding.right <= (window.innerWidth)
+        );
+    }
+
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
+
+        const elements = document.querySelectorAll('.element')
+
+        elements.forEach(element => {
+            if (isInViewport(element)) {
+                bringTextIntoFocus(element);
+            } else {
+                turnTextOutOfFocus(element);
+            }
+        });
+
+        if (scrollPosition >= gifPosition) {
+            zoomToUtah();
+        }
+    });
 
     // Create an image element
     const gif = gifP.append('img')
         .attr('src', 'src/error_404_animation_800x600.gif')
-        .style('padding-left', '12vw')
+        // .style('max-width', '100%')  // Ensure the image scales to the container width
+        // .style('max-height', '100%') // Ensure the image scales to the container height
+        // .style('margin', 'auto');
+        // .style('padding-left', '12vw')
 
     const earedGrebe = slides_div.append('p')
         .text('The Great Salt Lake hosts anywhere from 2 to 5 million Eared Grebes per year, which at times is almost the entire North American population. Grebes need to consume 28,000 adult brine shrimp each day at the GSL to survive.')
@@ -142,15 +208,16 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
+        .attr('class', 'element')
 
     const egP = slides_div.append('p')
-        // .style('position', 'fixed');
+        .style('text-align', 'center')
 
     const egImg = egP.append('img')
         .attr('src', 'src/grebes.jpeg')
-        .attr('width', '900')
+        .attr('width', `${pageWidth / 4}`)
         .style('padding-top', '2vh') 
-        .style('transform', 'translateX(400px)');
+        // .style('transform', 'translateX(400px)');
 
     const earedGrebe2 = slides_div.append('p')
         .text('This means that Grebes need to forage for 7-7.5 hours of foraging per day, which equates to about 1-2 brine shrimp consumed per second in order to meet their dietary needs.')
@@ -161,6 +228,7 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
+        .attr('class', 'element')
 
     const earedGrebe3 = slides_div.append('p')
         .text('During what is called a fall-staging period, Grebes go through what is called "molting", which is where they shed their feathers to make way for newer, stronger ones.')
@@ -171,6 +239,8 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
+        .attr('class', 'element')
+
 
     const egP2 = slides_div.append('p');
 
@@ -187,6 +257,7 @@ function setup() {
         .style('font-size', '1.3vw') 
         .style('padding-top', '2vh') 
         .style('padding-left', '13vw') 
+        .attr('class', 'element')
 
     const earedGrebe5 = slides_div.append('p')
         .text('**Animation with sliders? to show how when temperatures rises at GSL (Utah becomes red?), salinity rises, brine shrimp populations suffer, as a result eared grebe populations do.**')
@@ -256,7 +327,7 @@ function setup() {
 
         const legend = migrationSvg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${pageWidth / 2.25}, ${pageHeight / 1.9})`); 
+            .attr("transform", `translate(${pageWidth / 2.25}, ${pageHeight / 2.1})`); 
 
         legend.selectAll("rect")
             .data(d3.range(0, 1.01, 0.01)) 
@@ -297,9 +368,6 @@ function setup() {
     }
     
     createColorLegend(customColorScale);
-
-    const projection = d3.geoAlbers()
-        .translate([(pageWidth / 4) + 100, pageHeight / 2])
     
     const pathGenerator = d3.geoPath().projection(projection);
 
@@ -311,21 +379,78 @@ function setup() {
     
     function zoomed(event) {
         const { transform } = event;
-        d3.select('.pathsG').attr("transform", transform)
-        console.log(event)
-    }
-
-   
-    function zoomIn() {
-        migrationSvg.transition().duration(500)
-
-    }
+        
+        // Select the first path within the g element with class pathsG
+        const firstPathInGroup = d3.select('.pathsG').select('path');
     
+        // Apply the zoom transformation to the first path
+        firstPathInGroup.attr("transform", transform);
+    
+        // Log the event for debugging
+        console.log(event);
+    }
+
+    // function triggerZoom() {
+    //     // Calculate the desired transformation (e.g., scale and translate)
+    //     const transform = d3.zoomIdentity.scale(200).translate(100, 100); // Example transformation
+        
+    //     // Apply the transformation to your SVG element
+    //     migrationSvg.transition().duration(500) // Optionally add a smooth transition
+    //         .call(zoom.transform, transform);
+    // }
+    
+    // function zoomed() {
+    //     if (d3.event && d3.event.transform) {
+    //         const { x, y, k } = d3.event.transform;
+    
+    //         // Coordinates of Utah
+    //         const utahLat = 39.3210; 
+    //         const utahLong = -111.0937; 
+    
+    //         // Calculate translation to center Utah
+    //         const translateX = pageWidth / 2 - utahLong * k;
+    //         const translateY = pageHeight / 2 - utahLat * k;
+    
+    //         // Apply the transformation
+    //         d3.select('.map-container')
+    //             .attr('transform', `translate(${translateX}, ${translateY}) scale(${k})`);
+    //     }
+    // }
+    
+    // function zoomIn() {
+    //     migrationSvg.transition().duration(500)
+    // }
+
+    // function zoomToUtah() {
+    //     const utahFeature = globalApplicationState.all_data[0].features.find(feature => feature.properties.name === "Utah");
+    //     console.log(utahFeature)
+    
+    //     const utahBounds = pathGenerator.bounds(utahFeature);
+    //     const utahCenter = pathGenerator.centroid(utahFeature);
+    
+    //     // Calculate the scale to fit Utah into the visualization
+    //     const utahScale = 0.9 / Math.max(
+    //         (utahBounds[1][0] - utahBounds[0][0]) / (pageWidth / 2),
+    //         (utahBounds[1][1] - utahBounds[0][1]) / pageHeight
+    //     );
+    
+    //     // Calculate the translate coordinates to center Utah
+    //     const utahTranslate = [
+    //         (pageWidth / 2) - (utahCenter[0] * utahScale),
+    //         (pageHeight / 2) - (utahCenter[1] * utahScale)
+    //     ];
+    
+    //     // Apply the zoom transform to zoom to Utah
+    //     migrationSvg.transition().duration(750).call(
+    //         zoom.transform,
+    //         d3.zoomIdentity.translate(utahTranslate[0], utahTranslate[1]).scale(utahScale)
+    //     );
+    // }
 
     function zoomToUtah() {
         const utahLat = 39.3210; 
         const utahLong = -111.0937; 
-        const utahScale = 4.8;
+        // const utahScale = 4.8;
 
         const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = globalApplicationState.all_data 
 
@@ -336,7 +461,7 @@ function setup() {
         draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)    
     }    
 
-    // buttonElement.addEventListener('click', function() {
+    // zoomButton.addEventListener('click', function() {
     //     zoomToUtah();
     //     console.log("Button clicked, zoomToArea function called.");
     // });
@@ -355,14 +480,18 @@ function setup() {
         // projection.center(center).fitSize([pageWidth / 2, pageHeight], { ...usStatesData, features : [usStatesData.features[21]]})
 
         // migrationSvg.selectAll().remove();
-
         
-        const pathsG = migrationSvg.append('g').attr('class', 'pathsG')
-
+        const pathsG = migrationSvg.select('.pathsG')
+        console.log('in draw')
         pathsG.selectAll(".bird-observation")
             .data(utBirdData.features)
-            .enter().append("path")
+            .join(
+                enter => {console.log('hello'); return enter.append("path")},
+                update => {console.log('update?'); return update},
+                exit => exit.remove()
+            )
             .attr("class", "bird-observation")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
@@ -372,12 +501,13 @@ function setup() {
                     // Map values close to 0 to a color closer to the background
                     return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
                 }
-            })
+            });
 
-            pathsG.selectAll(".nv-bird-observation")
+        pathsG.selectAll(".nv-bird-observation")
             .data(nvBirdData.features)
-            .enter().append("path")
+            .join("path")
             .attr("class", "nv-bird-observation")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
@@ -388,10 +518,11 @@ function setup() {
                     return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
                 }
             });
-            pathsG.selectAll(".mex-bird-observation")
+        pathsG.selectAll(".mex-bird-observation")
             .data(mexBirdData.features)
-            .enter().append("path")
+            .join("path")
             .attr("class", "mex-bird-observation")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
@@ -403,10 +534,11 @@ function setup() {
                 }
             });
 
-            pathsG.selectAll(".ca-bird-observation")
+        pathsG.selectAll(".ca-bird-observation")
             .data(caBirdData.features)
-            .enter().append("path")
+            .join("path")
             .attr("class", "ca-bird-observation")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
@@ -418,10 +550,11 @@ function setup() {
                 }
             });
 
-            pathsG.selectAll(".az-bird-observation")
+        pathsG.selectAll(".az-bird-observation")
             .data(azBirdData.features)
-            .enter().append("path")
+            .join("path")
             .attr("class", "az-bird-observation")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", d => {
                 if (d.properties.eargre === 'NA') {
@@ -433,7 +566,7 @@ function setup() {
                 }
             });
         
-        appendStateBoundaries(usStatesData, mexicoStatesData);
+        appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator);
         updateSpeciesData(2023)
     }
 
@@ -445,12 +578,12 @@ function setup() {
         globalApplicationState.current_species_data[4] = `${globalApplicationState.current_states[4]}/plot_${globalApplicationState.current_species[0]}_az_3_${year}`;
     }  
 
-     const sliderSvg = migrationSvg.append('svg')
-        .attr('id', 'sliderSvg')
-        .attr("height", pageHeight)
-        .attr("width", pageWidth / 2)
-        .style("position", "fixed") 
-        .style("right", "0px") 
+    //  const sliderSvg = migrationSvg.append('svg')
+    //     .attr('id', 'sliderSvg')
+    //     .attr("height", pageHeight)
+    //     .attr("width", pageWidth / 2)
+    //     .style("position", "fixed") 
+    //     .style("right", "0px") 
 
     // const slider = sliderBottom()
     //     .min(2004)
@@ -483,21 +616,24 @@ function setup() {
     let usStates;
     let mexicoStates;
 
-    function appendStateBoundaries(usStatesData, mexicoStatesData) {
+    function appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator) {
         const pathsG = d3.select('.pathsG')
+        console.log(pathsG)
 
         pathsG.selectAll(".state-boundary")
             .data(usStatesData.features)
-            .enter().append("path")
+            .join("path")
             .attr("class", "state-boundary")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", "none") 
             .style("stroke", "black") 
             .style("stroke-width", 1); 
-            pathsG.selectAll(".mexico-state-boundary")
+        pathsG.selectAll(".mexico-state-boundary")
             .data(mexicoStatesData.features)
-            .enter().append("path")
+            .join("path").transition()
             .attr("class", "mexico-state-boundary")
+            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", "none")
             .style("stroke", "black")
@@ -662,47 +798,6 @@ function setup() {
     //         .catch(error => console.error('Error updating map:', error));  
             
     // }
-
-    // Slider for months when needed below:
-
-
-    // const sliderSvg = body.append('svg')
-    // .attr('id', 'sliderSvg')
-    // .attr("height", 50)
-    // .attr("width", pageWidth / 2)
-    // .style("position", "absolute") // Position absolutely
-    // .style("top", "0px") // Adjust top position as needed
-    // .style("left", "0px"); // Position it on the left side
-
-// Create the slider
-    // const slider = d3.sliderHorizontal()
-    //     .min(1) // January is represented as 1
-    //     .max(12) // December is represented as 12
-    //     .step(1)
-    //     .width(pageWidth / 3) // Adjust the width as needed
-    //     .tickValues(d3.range(1, 13, 1)) // Include all months as tick values
-    //     .tickFormat((d) => {
-    //         const months = [
-    //             'January', 'February', 'March', 'April', 'May', 'June',
-    //             'July', 'August', 'September', 'October', 'November', 'December'
-    //         ];
-    //         return months[d - 1]; // Adjust index to match months array
-    //     });
-
-    // // Append the slider to the slider SVG
-    // sliderSvg.append('g')
-    //     .attr('transform', 'translate(50,20)') // Adjust positioning as needed
-    //     .attr("id", "slider_group")
-    //     .call(slider)
-    //     .attr('class', 'slider');
-
-    // // Select all ticks and style them
-    // sliderSvg.selectAll(".tick line")
-    //     .style("stroke-width", "2px") // Adjust stroke width as needed
-    //     .attr("y2", 10)
-    //     .style("stroke", "black");
-
-
 
 }
 
