@@ -29,7 +29,7 @@ function setup() {
     const header = body.append('div')
         .attr('class', 'header')
         .attr("id", "header")
-        .attr('height', '5px')
+        .attr('height', 20)
         .style('top', '0')
         .style('position', 'sticky')
         .attr('width', pageWidth)
@@ -44,12 +44,18 @@ function setup() {
 
     const migrationSvg = maps_div.append('svg')
         .attr('id', 'migrationSvg')
-        .style("position", "absolute") 
-        // .style("right", "0px")
         .style("height", pageHeight)
         .attr('position', 'fixed')
         .attr("width", pageWidth / 2)
-        // .style('margin-top', '60px')
+        .style('margin-top', 10)
+        .style('margin-bottom', '10px')
+
+    // const birds = migrationSvg.append('image')
+    //     .attr('xlink:href', 'src/Screenshot 2024-04-22 211731.png')
+    //     .attr('width', '70%')  
+    //     .attr('height', '100%')  
+    //     .attr('transform', 'translate(-100, -50)')
+        // .attr('transform', 'rotate(9)');    
 
     migrationSvg.append('g').attr('class', 'pathsG')
 
@@ -64,32 +70,33 @@ function setup() {
 
     const visName = header.append('div')
         .text('GSLBirdVis')
-        .attr('weight', pageWidth)
-        .style('transform', 'translateX(30px)')
+        .attr('width', pageWidth)
+        .attr('height', 50)
         .style('color', 'black')
         .style('font-size', '30px')
         .style('font-family', 'Bitstream Vera Sans Mono')
         .style('font-weight', 'bold')
         .style('background-color', 'white')
-        .style('display', 'flex')
-        .style('justify-content', 'space-between')
-
+        .style('text-align', 'left') 
+        .style('padding-left', '15px'); 
+    
     visName.append("button")
         .attr("width", 300)
-        .attr("height", 10)
+        .attr("height", 1)
         .text("ABOUT") 
-        .attr("rx", 10) // Border radius
+        .style('float', 'right')  
+        // .attr("rx", 10) 
+        .style('border-radius', '10px')
         .style("fill", "#0F579F")
         .style("stroke", "white")
-        .style('font-size', '30px')
+        .style('font-size', '18px')
         .style('font-weight', 'bold')
         .style("fill", "white")
-        .style('margin-right', '60px')
-        .style('margin-top', '10px')
-        .style('margin-bottom', '10px')
-        // .style('margin', '10px')
-        // .style('transform', `translateX(2000px)`);
+        .style('margin-right', '20px')
+        .style('margin-top', '5px')
+        .style('margin-bottom', '5px');
 
+    
     // const zoomButton = visName.append("button")
     //     .attr("width", 500)
     //     .attr("height", 50)
@@ -126,7 +133,7 @@ function setup() {
         .style('vertical-align', 'center')
         .style('text-align', 'left')
         .style('color', 'black')
-        .style('font-size', '1vw') 
+        .style('font-size', '1.2vw') 
         .style('padding-left', '5vw') 
 
     const opening = slides_div.append('p')
@@ -141,7 +148,7 @@ function setup() {
         .attr('class', 'element')
 
     const opening2 = slides_div.append('p')
-        .text('Here we will explore the migrations of the Eared Grebe and the American White Pelican as they travel to the Great Salt Lake over the past 20 years.')
+        .text('Here we will explore the migrations of the Eared Grebe and the American White Pelican as they travel to the Great Salt Lake over the past 20 years along the Pacific Flyway Route.')
         .style('font-family', 'Schotis Text Book')
         .style('vertical-align', 'center')
         .style('text-align', 'left')
@@ -151,14 +158,26 @@ function setup() {
         .style('padding-left', '5vw') 
         .attr('class', 'element')
 
-        // Create a paragraph element
+    const zoomIn = slides_div.append('p')
+        .text("Let's look at Utah!")
+        .style('font-family', 'Schotis Text Book')
+        .style('vertical-align', 'center')
+        .style('text-align', 'left')
+        .style('color', 'black')
+        .style('font-size', '1.3vw') 
+        .style('padding-top', '2vh') 
+        .style('padding-left', '15vw') 
+        .attr('class', 'element')
+
     const gifP = slides_div.append('p')
         .style('text-align', 'center');
 
-    const gifPosition = gifP.node().getBoundingClientRect().top + window.scrollY;
+    const textPosition = opening.node().getBoundingClientRect().top + window.scrollY;
 
     function bringTextIntoFocus(element) {
-        element.style.opacity = '1';
+        element.style.opacity = '1'
+        // element.style.fontWeight = 'bold';
+        element.style.textShadow = '0.4px 0.4px 0.3px rgba(0,0,0,0.5)';
     }
     
     function turnTextOutOfFocus(element) {
@@ -172,9 +191,12 @@ function setup() {
             bounding.top >= 0 &&
             bounding.left >= 0 &&
             bounding.bottom <= (window.innerHeight) &&
-            bounding.right <= (window.innerWidth)
+            bounding.right <= (window.innerWidth) &&
+            (element === opening2 || bounding.top <= window.innerHeight * 0.6) // Focus on opening2 or if the element is 60% visible
         );
-    }
+    }    
+
+    let hasZoomed = false; 
 
     window.addEventListener('scroll', () => {
         const scrollPosition = window.scrollY;
@@ -189,18 +211,22 @@ function setup() {
             }
         });
 
-        if (scrollPosition >= gifPosition) {
+        if (scrollPosition>= textPosition && !hasZoomed) {
             zoomToUtah();
+            hasZoomed = true; // Update the flag variable
         }
-    });
+        else if (scrollPosition < textPosition && hasZoomed) {
+            const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = globalApplicationState.all_data;
+            projection.fitSize([pageWidth / 2, pageHeight - 65], {...usStatesData, features: [...usStatesData.features, ...mexicoStatesData.features]});
+            draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator);
+            hasZoomed = false;
+        }
+     });
 
-    // Create an image element
-    const gif = gifP.append('img')
+     const gif = gifP.append('img')
         .attr('src', 'src/error_404_animation_800x600.gif')
-        // .style('max-width', '100%')  // Ensure the image scales to the container width
-        // .style('max-height', '100%') // Ensure the image scales to the container height
-        // .style('margin', 'auto');
-        // .style('padding-left', '12vw')
+        .style('max-width', '90%')  
+        .style('max-height', '90%') 
 
     const earedGrebe = slides_div.append('p')
         .text('The Great Salt Lake hosts anywhere from 2 to 5 million Eared Grebes per year, which at times is almost the entire North American population. Grebes need to consume 28,000 adult brine shrimp each day at the GSL to survive.')
@@ -209,7 +235,7 @@ function setup() {
         .style('text-align', 'left')
         .style('color', 'black')
         .style('font-size', '1.3vw') 
-        .style('padding-top', '2vh') 
+        // .style('padding-top', '2vh') 
         .style('padding-left', '5vw') 
         .attr('class', 'element')
 
@@ -223,7 +249,7 @@ function setup() {
         // .style('transform', 'translateX(400px)');
 
     const earedGrebe2 = slides_div.append('p')
-        .text('This means that Grebes need to forage for 7-7.5 hours of foraging per day, which equates to about 1-2 brine shrimp consumed per second in order to meet their dietary needs.')
+        .text('This means that Grebes need to forage for 7-7.5 hours a day, which equates to about 1-2 brine shrimp consumed per second in order to meet their dietary needs.')
         .style('font-family', 'Schotis Text Book')
         .style('vertical-align', 'center')
         .style('text-align', 'left')
@@ -320,8 +346,8 @@ function setup() {
         .domain([0, 1]);
 
     function createColorLegend(colorScale) {
-        const legendWidth = 50; 
-        const legendHeight = 250; 
+        const legendWidth = 40; 
+        const legendHeight = 180; 
         const numTicks = 5; 
     
         const legendScale = d3.scaleLinear()
@@ -330,7 +356,7 @@ function setup() {
 
         const legend = migrationSvg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${legendWidth - 50}, ${pageHeight - legendHeight})`); 
+            .attr("transform", `translate(${legendWidth - 50}, ${pageHeight - legendHeight - 80})`); 
 
         legend.selectAll("rect")
             .data(d3.range(0, 1.01, 0.01)) 
@@ -365,7 +391,7 @@ function setup() {
             .attr("y", d => legendScale(d))
             .attr("dy", "0.35em")
             .attr("text-anchor", "start")
-            .style("font-size", "25px") 
+            .style("font-size", "18px") 
             // .style('font-weight', 'bold')
             .text(d => tickFormat(d));
     }
@@ -395,18 +421,25 @@ function setup() {
 
 
     function zoomToUtah() {
-        const utahLat = 39.3210; 
-        const utahLong = -111.0937; 
-        // const utahScale = 4.8;
 
         const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = globalApplicationState.all_data 
 
         const center = d3.geoCentroid(usStatesData.features[21])
-        console.log(usStatesData.features[21])
-        projection.center(center).fitSize([pageWidth / 2, pageHeight], { ...usStatesData, features : [usStatesData.features[21]]})
+        projection.center(center).fitSize([pageWidth / 2, pageHeight - 70], { ...usStatesData, features : [usStatesData.features[21]]})
 
         draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator)    
+        appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator)
     }    
+
+    function zoomOut() {
+
+        const [utBirdData, nvBirdData, mexBirdData, caBirdData, azBirdData, usStatesData, mexicoStatesData] = globalApplicationState.all_data;
+
+        projection.fitSize([pageWidth / 2, pageHeight - 65], {...usStatesData, features: [...usStatesData.features, ...mexicoStatesData.features]})
+    
+        draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator);
+    }
+    
 
 
     function draw(utBirdData, azBirdData, nvBirdData, caBirdData, mexBirdData, usStatesData, mexicoStatesData, pathGenerator) {
@@ -418,92 +451,124 @@ function setup() {
         
         const pathsG = migrationSvg.select('.pathsG');
 
-        // pathsG.selectAll(".bird-observation")
-        //     .data(utBirdData.features)
-        //     .join(
-        //         enter => enter.append("path")
-        //         .attr("class", "bird-observation")
-        //         .attr("d", pathGenerator)
-        //         .style("fill", "white"), // Start with white fill for all pixels
-        //     update => update,
-        //     exit => exit.remove()
-        //     )
-        //     .attr("class", "bird-observation")
-        //     .transition().duration(500)
-        //     .attr("d", pathGenerator)
-        //     .delay((d, i) => i * 3)
-        //     .style("fill", d => {
-        //         if (d.properties.eargre === 'NA') {
-        //             return 'white'; // No data, same color as background
-        //         } else {
-        //             const value = +d.properties.eargre; // Convert to number
-        //             // Map values close to 0 to a color closer to the background
-        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-        //         }
-        //     });
+        pathsG.selectAll(".bird-observation")
+            .data(utBirdData.features)
+            .join(
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
+            )
+            .attr("class", "bird-observation")
+            .transition().duration(500)
+            .attr("d", pathGenerator)
+            .delay((d, i) => i * 3)
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'white'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
 
-        //     pathsG.selectAll(".nv-bird-observation")
-        //     .data(nvBirdData.features)
-        //     .join("path")
-        //     .attr("class", "nv-bird-observation")
-        //     .transition().duration(4000)
-        //     .attr("d", pathGenerator)
-        //     .style("fill", d => {
-        //         if (d.properties.eargre === 'NA') {
-        //             return 'none'; // No data, same color as background
-        //         } else {
-        //             const value = +d.properties.eargre; // Convert to number
-        //             // Map values close to 0 to a color closer to the background
-        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-        //         }
-        //     });
-        // pathsG.selectAll(".mex-bird-observation")
-        //     .data(mexBirdData.features)
-        //     .join("path")
-        //     .attr("class", "mex-bird-observation")
-        //     .transition().duration(4000)
-        //     .attr("d", pathGenerator)
-        //     .style("fill", d => {
-        //         if (d.properties.eargre === 'NA') {
-        //             return 'none'; // No data, same color as background
-        //         } else {
-        //             const value = +d.properties.eargre; // Convert to number
-        //             // Map values close to 0 to a color closer to the background
-        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-        //         }
-        //     });
+            pathsG.selectAll(".nv-bird-observation")
+            .data(nvBirdData.features)
+            .join(
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
+            )
+            .attr("class", "bird-observation")
+            .transition().duration(500)
+            .attr("d", pathGenerator)
+            .delay((d, i) => i * 3)
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'none'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
+        pathsG.selectAll(".mex-bird-observation")
+            .data(mexBirdData.features)
+            .join(
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
+            )
+            .attr("class", "bird-observation")
+            .transition().duration(500)
+            .delay((d, i) => i * 3)
+            .attr("d", pathGenerator)
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'none'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
 
-        // pathsG.selectAll(".ca-bird-observation")
-        //     .data(caBirdData.features)
-        //     .join("path")
-        //     .attr("class", "ca-bird-observation")
-        //     .transition().duration(4000)
-        //     .attr("d", pathGenerator)
-        //     .style("fill", d => {
-        //         if (d.properties.eargre === 'NA') {
-        //             return 'none'; // No data, same color as background
-        //         } else {
-        //             const value = +d.properties.eargre; // Convert to number
-        //             // Map values close to 0 to a color closer to the background
-        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-        //         }
-        //     });
+        pathsG.selectAll(".ca-bird-observation")
+            .data(caBirdData.features)
+            .join(
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
+            )
+            .attr("class", "bird-observation")
+            .transition().duration(500)
+            .delay((d, i) => i * 1.2)
+            .attr("d", pathGenerator)
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'none'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
 
-        // pathsG.selectAll(".az-bird-observation")
-        //     .data(azBirdData.features)
-        //     .join("path")
-        //     .attr("class", "az-bird-observation")
-        //     .transition().duration(4000)
-        //     .attr("d", pathGenerator)
-        //     .style("fill", d => {
-        //         if (d.properties.eargre === 'NA') {
-        //             return 'none'; // No data, same color as background
-        //         } else {
-        //             const value = +d.properties.eargre; // Convert to number
-        //             // Map values close to 0 to a color closer to the background
-        //             return value < 0.01 ? d3.interpolate("#FFFFFF", customColorScale(value))(0.1) : customColorScale(value);
-        //         }
-        //     });
+        pathsG.selectAll(".az-bird-observation")
+            .data(azBirdData.features)
+            .join(
+                enter => enter.append("path")
+                .attr("class", "bird-observation")
+                .attr("d", pathGenerator)
+                .style("fill", "white"), // Start with white fill for all pixels
+            update => update,
+            exit => exit.remove()
+            )
+            .attr("class", "bird-observation")
+            .transition().duration(500)
+            .delay((d, i) => i * 3)
+            .attr("d", pathGenerator)
+            .style("fill", d => {
+                if (d.properties.eargre === 'NA') {
+                    return 'none'; // No data, same color as background
+                } else {
+                    const value = +d.properties.eargre; // Convert to number
+                    // Map values close to 0 to a color closer to the background
+                    return value < 0.01 ? d3.interpolate("#FFFFFF", customColorScale(value))(0.1) : customColorScale(value);
+                }
+            });
         
         appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator);
         updateSpeciesData(2023)
@@ -555,24 +620,80 @@ function setup() {
     let usStates;
     let mexicoStates;
 
+    migrationSvg.append("rect")
+        .attr("x", pageWidth / 2.7)  
+        .attr("y", pageHeight / 1.4)  
+        .attr("width", 20)  
+        .attr("height", 20)  
+        .style("fill", '#cadecb')
+        .style("stroke", "black") // Add border color
+        .style("stroke-width", 1);
+
+    migrationSvg.append("text")
+        .attr("x", pageWidth / 2.55)  
+        .attr("y", pageHeight / 1.38) 
+        .style('font-size', '15px')
+        .attr("alignment-baseline", "middle")
+        .text("Outside of ")
+        .append("tspan")
+        .attr("x", pageWidth / 2.55)  // Set the same x value as the main text
+        .text("Migration Route")
+        .attr("dy", "1.2em");
+
+    // Append a rectangle to use the pattern fill
+    migrationSvg.append("rect")
+        .attr("x", pageWidth / 2.7)  
+        .attr("y", pageHeight / 1.26)  
+        .attr("width", 20)  
+        .attr("height", 20) 
+        .style("fill", 'white')
+        .style("stroke", "black") // Add border color
+        .style("stroke-width", 1);
+
+    migrationSvg.append("text")
+        .attr("x", pageWidth / 2.55)  
+        .attr("y", pageHeight / 1.25) 
+        .style('font-size', '15px')
+        .attr("alignment-baseline", "middle")
+        .text("Pacific Flyway")
+        .append("tspan")
+        .attr("x", pageWidth / 2.55)  // Set the same x value as the main text
+        .text("Migration Route")
+        .attr("dy", "1.2em");
+
+    migrationSvg.append("text")
+        .attr("x", pageWidth / 2.8)
+        .attr("y", "10")
+        .style('font-size', '20px')
+        .attr("alignment-baseline", "middle")
+        .text("May 2023")
+        .style('font-family', 'Schotis Text Book')
+
+
+
+
     function appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator) {
         const pathsG = d3.select('.pathsG')
-        console.log(pathsG)
 
         pathsG.selectAll(".state-boundary")
             .data(usStatesData.features)
             .join("path")
             .attr("class", "state-boundary")
-            .transition().duration(4000)
             .attr("d", pathGenerator)
-            .style("fill", "none") 
-            .style("stroke", "black") 
-            .style("stroke-width", 1); 
+            .style("fill", d => {
+                if (["California", "Utah", "Arizona", "Nevada", "Idaho", "Washington", "Oregon"].includes(d.properties.NAME)) {
+                    return "none"; 
+                } else {
+                    return "#cadecb"; 
+                }
+            })
+            .style("stroke", "black")
+            .style("stroke-width", 1);
+
         pathsG.selectAll(".mexico-state-boundary")
             .data(mexicoStatesData.features)
             .join("path")
             .attr("class", "mexico-state-boundary")
-            .transition().duration(4000)
             .attr("d", pathGenerator)
             .style("fill", "none")
             .style("stroke", "black")
@@ -600,7 +721,7 @@ function setup() {
         console.log('US States GeoJSON data:', usStatesData);
         console.log('Mexico States GeoJSON data:', mexicoStatesData);
 
-        projection.fitSize([pageWidth / 2, pageHeight], {...usStatesData, features: [...usStatesData.features, ...mexicoStatesData.features]})
+        projection.fitSize([pageWidth / 2, pageHeight - 65], {...usStatesData, features: [...usStatesData.features, ...mexicoStatesData.features]})
 
         usStates = usStatesData
         mexicoStates = mexicoStatesData
