@@ -29,7 +29,7 @@ function setup() {
     const header = body.append('div')
         .attr('class', 'header')
         .attr("id", "header")
-        .attr('height', '40px')
+        .attr('height', '5px')
         .style('top', '0')
         .style('position', 'sticky')
         .attr('width', pageWidth)
@@ -54,9 +54,6 @@ function setup() {
     migrationSvg.append('g').attr('class', 'pathsG')
 
     const projection = d3.geoAlbers()
-        // .translate([(pageWidth / 4), pageHeight / 9])
-        // .scale(20000)
-
 
     const reveal_div = body.append('div')
         .attr('id', 'revealDiv')
@@ -70,7 +67,7 @@ function setup() {
         .attr('weight', pageWidth)
         .style('transform', 'translateX(30px)')
         .style('color', 'black')
-        .style('font-size', '50px')
+        .style('font-size', '30px')
         .style('font-family', 'Bitstream Vera Sans Mono')
         .style('font-weight', 'bold')
         .style('background-color', 'white')
@@ -78,8 +75,8 @@ function setup() {
         .style('justify-content', 'space-between')
 
     visName.append("button")
-        .attr("width", 500)
-        .attr("height", 50)
+        .attr("width", 300)
+        .attr("height", 10)
         .text("ABOUT") 
         .attr("rx", 10) // Border radius
         .style("fill", "#0F579F")
@@ -421,92 +418,92 @@ function setup() {
         
         const pathsG = migrationSvg.select('.pathsG');
 
-        pathsG.selectAll(".bird-observation")
-            .data(utBirdData.features)
-            .join(
-                enter => enter.append("path")
-                .attr("class", "bird-observation")
-                .attr("d", pathGenerator)
-                .style("fill", "white"), // Start with white fill for all pixels
-            update => update,
-            exit => exit.remove()
-            )
-            .attr("class", "bird-observation")
-            .transition().duration(500)
-            .attr("d", pathGenerator)
-            .delay((d, i) => i * 3)
-            .style("fill", d => {
-                if (d.properties.eargre === 'NA') {
-                    return 'white'; // No data, same color as background
-                } else {
-                    const value = +d.properties.eargre; // Convert to number
-                    // Map values close to 0 to a color closer to the background
-                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-                }
-            });
+        // pathsG.selectAll(".bird-observation")
+        //     .data(utBirdData.features)
+        //     .join(
+        //         enter => enter.append("path")
+        //         .attr("class", "bird-observation")
+        //         .attr("d", pathGenerator)
+        //         .style("fill", "white"), // Start with white fill for all pixels
+        //     update => update,
+        //     exit => exit.remove()
+        //     )
+        //     .attr("class", "bird-observation")
+        //     .transition().duration(500)
+        //     .attr("d", pathGenerator)
+        //     .delay((d, i) => i * 3)
+        //     .style("fill", d => {
+        //         if (d.properties.eargre === 'NA') {
+        //             return 'white'; // No data, same color as background
+        //         } else {
+        //             const value = +d.properties.eargre; // Convert to number
+        //             // Map values close to 0 to a color closer to the background
+        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+        //         }
+        //     });
 
-            pathsG.selectAll(".nv-bird-observation")
-            .data(nvBirdData.features)
-            .join("path")
-            .attr("class", "nv-bird-observation")
-            .transition().duration(4000)
-            .attr("d", pathGenerator)
-            .style("fill", d => {
-                if (d.properties.eargre === 'NA') {
-                    return 'none'; // No data, same color as background
-                } else {
-                    const value = +d.properties.eargre; // Convert to number
-                    // Map values close to 0 to a color closer to the background
-                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-                }
-            });
-        pathsG.selectAll(".mex-bird-observation")
-            .data(mexBirdData.features)
-            .join("path")
-            .attr("class", "mex-bird-observation")
-            .transition().duration(4000)
-            .attr("d", pathGenerator)
-            .style("fill", d => {
-                if (d.properties.eargre === 'NA') {
-                    return 'none'; // No data, same color as background
-                } else {
-                    const value = +d.properties.eargre; // Convert to number
-                    // Map values close to 0 to a color closer to the background
-                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-                }
-            });
+        //     pathsG.selectAll(".nv-bird-observation")
+        //     .data(nvBirdData.features)
+        //     .join("path")
+        //     .attr("class", "nv-bird-observation")
+        //     .transition().duration(4000)
+        //     .attr("d", pathGenerator)
+        //     .style("fill", d => {
+        //         if (d.properties.eargre === 'NA') {
+        //             return 'none'; // No data, same color as background
+        //         } else {
+        //             const value = +d.properties.eargre; // Convert to number
+        //             // Map values close to 0 to a color closer to the background
+        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+        //         }
+        //     });
+        // pathsG.selectAll(".mex-bird-observation")
+        //     .data(mexBirdData.features)
+        //     .join("path")
+        //     .attr("class", "mex-bird-observation")
+        //     .transition().duration(4000)
+        //     .attr("d", pathGenerator)
+        //     .style("fill", d => {
+        //         if (d.properties.eargre === 'NA') {
+        //             return 'none'; // No data, same color as background
+        //         } else {
+        //             const value = +d.properties.eargre; // Convert to number
+        //             // Map values close to 0 to a color closer to the background
+        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+        //         }
+        //     });
 
-        pathsG.selectAll(".ca-bird-observation")
-            .data(caBirdData.features)
-            .join("path")
-            .attr("class", "ca-bird-observation")
-            .transition().duration(4000)
-            .attr("d", pathGenerator)
-            .style("fill", d => {
-                if (d.properties.eargre === 'NA') {
-                    return 'none'; // No data, same color as background
-                } else {
-                    const value = +d.properties.eargre; // Convert to number
-                    // Map values close to 0 to a color closer to the background
-                    return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
-                }
-            });
+        // pathsG.selectAll(".ca-bird-observation")
+        //     .data(caBirdData.features)
+        //     .join("path")
+        //     .attr("class", "ca-bird-observation")
+        //     .transition().duration(4000)
+        //     .attr("d", pathGenerator)
+        //     .style("fill", d => {
+        //         if (d.properties.eargre === 'NA') {
+        //             return 'none'; // No data, same color as background
+        //         } else {
+        //             const value = +d.properties.eargre; // Convert to number
+        //             // Map values close to 0 to a color closer to the background
+        //             return value < 0.01 ? d3.interpolate("white", customColorScale(value))(0.1) : customColorScale(value);
+        //         }
+        //     });
 
-        pathsG.selectAll(".az-bird-observation")
-            .data(azBirdData.features)
-            .join("path")
-            .attr("class", "az-bird-observation")
-            .transition().duration(4000)
-            .attr("d", pathGenerator)
-            .style("fill", d => {
-                if (d.properties.eargre === 'NA') {
-                    return 'none'; // No data, same color as background
-                } else {
-                    const value = +d.properties.eargre; // Convert to number
-                    // Map values close to 0 to a color closer to the background
-                    return value < 0.01 ? d3.interpolate("#FFFFFF", customColorScale(value))(0.1) : customColorScale(value);
-                }
-            });
+        // pathsG.selectAll(".az-bird-observation")
+        //     .data(azBirdData.features)
+        //     .join("path")
+        //     .attr("class", "az-bird-observation")
+        //     .transition().duration(4000)
+        //     .attr("d", pathGenerator)
+        //     .style("fill", d => {
+        //         if (d.properties.eargre === 'NA') {
+        //             return 'none'; // No data, same color as background
+        //         } else {
+        //             const value = +d.properties.eargre; // Convert to number
+        //             // Map values close to 0 to a color closer to the background
+        //             return value < 0.01 ? d3.interpolate("#FFFFFF", customColorScale(value))(0.1) : customColorScale(value);
+        //         }
+        //     });
         
         appendStateBoundaries(usStatesData, mexicoStatesData, pathGenerator);
         updateSpeciesData(2023)
