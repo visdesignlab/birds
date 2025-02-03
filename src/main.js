@@ -47,6 +47,7 @@ function setup() {
     const openingStoryline = document.querySelector(".opening_storyline");
     resizeObserver.observe(opening);
     
+    // Event listener for first page to second page
     let scrollProgress = 0; 
     window.addEventListener("wheel", (event) => {
         if (event.deltaY > 0) {
@@ -83,28 +84,50 @@ function setup() {
 
     const grebeContent = document.querySelector('.grebe-content');
     const pelicanContent = document.querySelector('.pelican-content');
+    const grebeOpening = document.querySelector('.EG_opening')
+    const pelicanOpening = document.querySelector('.pelican-opening');
     
     // Function to change content based on the button clicked
     function changeContent(birdType) {
-        if (birdType === 'grebe' && pelicanContent.style.visibility != 'visible') {
+        if (birdType === 'grebe') {
             console.log('grebe change content function called');
             opening.style.display = 'none'; 
             openingStoryline.style.display = 'none'; 
+            pelicanOpening.style.display = 'none';
             grebeContent.style.visibility = 'visible'; // Show the Grebe content
             grebeContent.style.opacity = 1; // Fade the Grebe content in
         } 
         else if (birdType === 'pelican') {
+            console.log('pelican change content function called');
             opening.style.display = 'none'; 
             openingStoryline.style.display = 'none'; 
-            grebeContent.style.display = 'none';
+            grebeOpening.style.display = 'none';
+            // pelicanOpening.style.opacity = 1;
             pelicanContent.style.visibility = 'visible'; 
-            pelicanContent.style.opacity = 1; 
       }
+    }
+
+    document.getElementById('visualize-migration').addEventListener('click', function() {
+        egContentChange();
+    })
+
+    const grebeContent1 =document.getElementById('grebe-content1')
+    const grebeContent2 =document.getElementById('grebe-content2')
+    const grebeContent3 =document.getElementById('grebe-content3')
+
+    const egPopulationButton = document.getElementById('eg_linegraph_animation')
+
+    function egContentChange(){
+        grebeContent3.style.visibility = 'visible';
+        grebeContent3.style.opacity = 1;
+        egPopulationButton.style.opacity = 1;
+
     }
 
     const projection = d3.geoAlbers()
     const path = d3.geoPath().projection(projection);
     const egMap = d3.select("#grebe-map svg");
+    const pelicanMap = d3.select("#pelican-map svg");
 
 
     d3.json('birds/map_geojsons/us_states.geojson').then(function(usGeojson) {
@@ -117,9 +140,17 @@ function setup() {
         };
 
         egMap.selectAll("path").remove(); 
-
-        // Plot the U.S. and Mexico on the map
         egMap.selectAll("path")
+            .data(combinedGeojson.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", "lightblue")
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.5);
+
+        pelicanMap.selectAll("path").remove(); 
+        pelicanMap.selectAll("path")
             .data(combinedGeojson.features)
             .enter()
             .append("path")
@@ -172,9 +203,21 @@ function setup() {
     }
 
     // resizeObserver.observe(egMap)
+    document.getElementById('eg_linegraph_animation').addEventListener('click', function() {
+        // Select the correct elements
+        const egMapDiv = document.getElementById('grebe-map'); // Map div
+        const egLinegraphDiv = document.querySelector('.EG_linegraph'); // Line graph div
+    
+        // Hide the map and show the line graph
+        egMapDiv.style.display = 'none';
+        egLinegraphDiv.style.display = 'block';
+    
+        // Call your function to create the line graph
+        createEGLinegraph();
+    });
+    
 
-
-    createEGLinegraph();
+    
     
     
 

@@ -146,11 +146,12 @@
       style=
       "display: flex; 
       flex-direction: row;
-      position: relative;  
       margin-top: 8px;
       width: 100%; 
-      overflow: hidden;
-      justify-content: center;">">
+      justify-content: center;
+      max-height: 100vh;
+      overflow-y: auto;
+      scrollbar-width: none;">
       <div class="grebe-content" 
       style=
       "opacity: 0; 
@@ -162,20 +163,34 @@
       font-family: 'Times New Roman', serif;
       color: black;
       font-size: 1.2vw;
-      width: 40%">
-        <p class = "text-style">
+      width: 40%;
+      margin-left: 3vw;">
+        <p class = "text-style" id="grebe-content1">
           <span style="font-size: 2.6vw; line-height: 1; font-family: 'Times New Roman', serif;color: black;">T</span>he Eared Grebe, the most abundant grebe species in the world, 
           begins their flight South from the Pacific Northwest towards the Great Salt Lake around September. </p>
-        <p class="text-style">
+        <p class="text-style" id="grebe-content2">
           During this time in the Fall, Grebes come to stock up on food before heading to Mexico for the winter. Then, in the Spring, the Grebes will come back to breed and nest at the 
           GSL.
         </p>
-        <button class="button-55" id="grebe-button" role="button" style="justify-content: center; margin-left: 5vw;">
-          VISUALIZE MIGRATION
-        </button>
-        <!-- <p>
-          but the success of this is highly dependent on the Fall and Spring climate of the Great Salt Lake, as well as the winter climate along the Mexican shorelines.
-        </p> -->
+        <div style="justify-content: center; align-items: center; line-height: 1;"> 
+          <button class="button-55" id="visualize-migration" role="button">
+            VISUALIZE MIGRATION
+          </button>
+        </div>
+        <p class="text-style" id="grebe-content3" style="opacity: 0;">
+          <br> Over an entire year, the Great Salt Lake hosts anywhere from 2 to 5 million Eared Grebes a year, which at times is almost the entire North American population. 
+          As the Grebes travel between Mexico and the Great Salt Lake, the associated climate with these locations largely directs the 
+          success of their migration. 
+          At the Great Salt Lake in the Fall, Grebes are heavily dependent on the brine shrimp supply. Needing to consume 28,000
+          adult brine shrimp daily to survive, this equates to about 7-8 hours of foraging a day. So in other words, being an Eared Grebe at the Great Salt Lake is a full time job. 
+          Additionally, during the Fall Grebes go through what is called a molting stage where they shed all of their feathers and become flightless while they stock up on shrimp for the
+          next few months. So on top of eating full-time, they are stuck at the Great Salt Lake until they are well fed and have their new feathers to take them down to Mexico. 
+        </p>
+        <div id = "eg_linegraph_animation" style="justify-content: center; align-items: center; line-height: 1; opacity: 0;"> 
+          <button class="button-55" id="eg_linegraph_animation" role="button">
+            POPULATION OVER THE YEARS
+          </button>
+        </div>
       </div>
       <div class="grebe-map" id="grebe-map">
         <svg id="grebe-map-svg" 
@@ -185,42 +200,58 @@
           margin-top: 5vh;">
         </svg>
       </div>
-    </div>
-
-    <div class="EG_linegraph">
-      <svg id="grebe_linegraph" 
-      style=
-      "width:700px;
-      height: 700px;" >
-      </svg>
-
-    </div>
-
-
-
-    <div class="pelican-content" 
-      style="visibility: hidden;
-      width: 50%;
-      height: auto;
-      margin-top: 10px;
-      margin-left: 70px;
-      overflow: visible;
-      transform: translateY(10vh);
-      font-family: 'Times New Roman', serif;
-      color: black;
-      font-size: 1.2vw;
-      opacity: 0;
-      transition: transform 1s ease, opacity 1.5s ease;">
-      <p><span style="font-size: 2.6vw; line-height: 1;"> T</span>he American White Pelican</p>
-      <div class="grebe-map" id="grebe-map" style="position: right; margin-bottom: 300px;"> 
-        <svg style= "width: 500px; height : 500px; margin-left:60vw; margin-bottom: 300vh" ></svg>
+      <div class="EG_linegraph" style="display: none;">
+        <svg id="grebe_linegraph" 
+        style=
+        "width:700px;
+        height: 700px;" >
         </svg>
+        <!-- <button class="button-55" id="eg_linegraph_animation" role="button">
+          CLICK TO START ANIMATION
+        </button> -->
       </div>
     </div>
 
-    <!-- <div class="pelican-content" style="display: none;"></div>
-      <p>he American White Pelican </p>        
-    </div> -->
+    
+
+
+    <div class="pelican-opening" id="pelican-opening"
+    style=
+    "display: flex; 
+    flex-direction: row;
+    margin-top: 8px;
+    width: 100%; 
+    justify-content: center;
+    max-height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;">
+      <div class="pelican-content" 
+      style=
+      "transition: transform 1s ease, 
+      opacity 1.5s ease; 
+      overflow-wrap: break-word; 
+      word-wrap: break-word; 
+      margin-top: 8vh;
+      font-family: 'Times New Roman', serif;
+      color: black;
+      font-size: 1.2vw;
+      width: 40%;
+      margin-left: 3vw;">
+      <p class = "text-style" id="pelican-content1">
+        <span style="font-size: 2.6vw; line-height: 1;"> T</span>he world's second largest colony of American White Pelican's exist on Great Salt Lake's Gunnison Island. Located on the 
+        west shore of the the lake in the north arm of Gunnison bay, pelicans have been known to come here for over 125,000 years.  </p>
+      </div>
+      <div id="pelican-map">
+        <svg id="pelican-map-svg" 
+          style=
+          "width: 870px; 
+          height: 870px;
+          margin-top: 5vh;">
+        </svg>
+      </div>
+
+    </div>
+  
 
  
     <style>
@@ -233,19 +264,6 @@
         font-family: 'Times New Roman', 
         serif;color: black; 
       }
-
-      /* .column {
-        float: left;
-        width: 50%;
-        padding: 10px;
-      } */
-
-      /* Clear floats after the columns */
-      /* .row:after {
-        content: "";
-        display: table;
-        clear: both;
-      } */
 
       .opening.hidden {
           opacity: 0;
