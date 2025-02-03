@@ -2,6 +2,8 @@
 import * as d3 from 'd3'
 import { sliderBottom, sliderTop } from 'd3-simple-slider'
 import { Button } from '@mantine/core';
+// import { createEGLinegraph } from './eg_linegraph.js';
+
 
 // Setting up global applicatino state, stores variables for the current species, the names of the geojsons, and the current years. 
 // Always updates as the user scrolls to allow functionality for different species, states, and years. 
@@ -33,25 +35,16 @@ function setup() {
     const opening = document.querySelector(".opening");
 
 
-
-
     const resizeObserver = new ResizeObserver(entries => {
         console.log(entries)
         entries.forEach(entry => {
             const { width, height } = entry.contentRect;
-    
-            
-            // entry.target.style.height = "auto"; 
-            // entry.target.style.fontSize = `${width / 20}px`; 
-    
             console.log(`Resized: ${entry.target.tagName}, Width: ${width}, Height: ${height}`);
         });
     });
     
 
     const openingStoryline = document.querySelector(".opening_storyline");
-    const storylineHeight = openingStoryline.offsetHeight;
-
     resizeObserver.observe(opening);
     
     let scrollProgress = 0; 
@@ -67,11 +60,13 @@ function setup() {
             // Make opening disappear 
             opening.style.opacity = 0;
             // Move and fade in openingStoryline
-            openingStoryline.style.transform = `translateY(-${storylineHeight}px)`; // Adjust based on its height
+            openingStoryline.style.transform = `translateY(-65vh)`;
             openingStoryline.style.opacity = 1;
+
+
         } else {
             opening.style.opacity = 1;
-            // Reset openingStoryline position and opacity
+            // Restore openingStoryline
             openingStoryline.style.transform = "translateY(0)";
             openingStoryline.style.opacity = 0;
         }
@@ -89,7 +84,7 @@ function setup() {
     const grebeContent = document.querySelector('.grebe-content');
     const pelicanContent = document.querySelector('.pelican-content');
     
-    // // Function to change content based on the button clicked
+    // Function to change content based on the button clicked
     function changeContent(birdType) {
         if (birdType === 'grebe' && pelicanContent.style.visibility != 'visible') {
             console.log('grebe change content function called');
@@ -109,22 +104,77 @@ function setup() {
 
     const projection = d3.geoAlbers()
     const path = d3.geoPath().projection(projection);
-    const egMap = document.querySelector
-    var svg = d3.select("#grebe-map svg");
-    d3.json('birds/map_geojsons/us_states.geojson').then(function(geojson) {
+    const egMap = d3.select("#grebe-map svg");
 
-        svg.selectAll("path")
-            .data(geojson.features)
+
+    d3.json('birds/map_geojsons/us_states.geojson').then(function(usGeojson) {
+        d3.json('birds/map_geojsons/states.geojson').then(function(mexicoGeojson) {
+
+        // Combine U.S. and Mexico GeoJSON features
+        const combinedGeojson = {
+            type: "FeatureCollection",
+            features: usGeojson.features.concat(mexicoGeojson.features)
+        };
+
+        egMap.selectAll("path").remove(); 
+
+        // Plot the U.S. and Mexico on the map
+        egMap.selectAll("path")
+            .data(combinedGeojson.features)
             .enter()
             .append("path")
-            .attr("d", path) 
+            .attr("d", path)
             .attr("fill", "lightblue")
             .attr("stroke", "black")
             .attr("stroke-width", 0.5);
 
+        const washington = projection([122.3328, 47.6061]);  // Washington state (longitude, latitude)
+        const utah = projection([112.4768, 41.1158]);       // Utah (longitude, latitude)
+        const mexico = projection([115.2838, 30.8406]);       // Mexico (longitude, latitude)
+
+        console.log("Washington projection:", washington);
+        console.log("Utah projection:", utah);
+        console.log("Mexico projection:", mexico);
+
+        // Draw arrows using line elements
+        drawArrow(washington, utah);
+        drawArrow(utah, mexico);
+
+        }).catch(function(error) {
+            console.error("Error loading the Mexico GeoJSON file: ", error);
+        });
     }).catch(function(error) {
-        console.error("Error loading the GeoJSON file: ", error);
+        console.error("Error loading the U.S. GeoJSON file: ", error);
     });
+
+    function drawArrow(start, end) {
+        console.log("Drawing arrow from", start, "to", end);
+        const arrowPath = `M${start[0]},${start[1]} L${end[0]},${end[1]}`;
+        
+         // Check if start and end are valid coordinates
+        if (start && end && start[0] && start[1] && end[0] && end[1]) {
+            const arrowPath = `M${start[0]},${start[1]} L${end[0]},${end[1]}`;
+
+        // Add the line (arrow path)
+            egMap.append("path")
+                .attr("d", arrowPath)
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 2);
+
+            // Add arrowhead (adjust size as necessary)
+            egMap.append("polygon")
+                .attr("points", `${end[0] - 5},${end[1] - 5} ${end[0] + 5},${end[1] - 5} ${end[0]},${end[1] + 10}`)
+                .attr("fill", "black");
+        } else {
+            console.error("Invalid coordinates for arrow:", start, end);
+        }
+    }
+
+    // resizeObserver.observe(egMap)
+
+
+    createEGLinegraph();
     
     
 
