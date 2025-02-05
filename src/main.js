@@ -82,9 +82,9 @@ function setup() {
         changeContent('pelican'); // Show Pelican content
     });
 
+    const grebeOpening = document.querySelector('.EG_opening');
     const grebeContent = document.querySelector('.grebe-content');
     const pelicanContent = document.querySelector('.pelican-content');
-    const grebeOpening = document.querySelector('.EG_opening')
     const pelicanOpening = document.querySelector('.pelican-opening');
     
     // Function to change content based on the button clicked
@@ -93,16 +93,18 @@ function setup() {
             console.log('grebe change content function called');
             opening.style.display = 'none'; 
             openingStoryline.style.display = 'none'; 
-            pelicanOpening.style.display = 'none';
+            // pelicanOpening.style.display = 'none';
             grebeContent.style.visibility = 'visible'; // Show the Grebe content
             grebeContent.style.opacity = 1; // Fade the Grebe content in
         } 
         else if (birdType === 'pelican') {
             console.log('pelican change content function called');
+            console.log(pelicanContent.style.display)
             opening.style.display = 'none'; 
             openingStoryline.style.display = 'none'; 
             grebeOpening.style.display = 'none';
-            // pelicanOpening.style.opacity = 1;
+            // pelicanOpening.style.display = 'block';
+            pelicanContent.style.opacity = 1;
             pelicanContent.style.visibility = 'visible'; 
       }
     }
@@ -111,15 +113,14 @@ function setup() {
         egContentChange();
     })
 
-    const grebeContent1 =document.getElementById('grebe-content1')
-    const grebeContent2 =document.getElementById('grebe-content2')
     const grebeContent3 =document.getElementById('grebe-content3')
-
     const egPopulationButton = document.getElementById('eg_linegraph_animation')
 
     function egContentChange(){
         grebeContent3.style.visibility = 'visible';
         grebeContent3.style.opacity = 1;
+        grebeContent3.style.transform = "translateY(0)"; // Moves text smoothly into view
+
         egPopulationButton.style.opacity = 1;
 
     }
@@ -212,9 +213,24 @@ function setup() {
         egMapDiv.style.display = 'none';
         egLinegraphDiv.style.display = 'block';
     
-        // Call your function to create the line graph
-        createEGLinegraph();
+        const egSvg = d3.select("#grebe_linegraph");
+        createLinegraph(egSvg, "birds/eg_geojsons/EG_Year_Avgs.json");
     });
+
+    document.getElementById('amp_linegraph_animation').addEventListener('click', function() {
+        // Select the correct elements
+        const ampMapDiv = document.getElementById('pelican-map'); // Map div
+        const ampLinegraphDiv = document.querySelector('.AMP_linegraph'); // Line graph div
+    
+        // Hide the map and show the line graph
+        ampMapDiv.style.display = 'none';
+        ampLinegraphDiv.style.display = 'block';
+    
+        const ampSvg = d3.select("#pelican_linegraph");
+        createLinegraph(ampSvg, "birds/amp_geojsons/AMP_Year_Avgs.json");
+    });
+
+
     
 
     

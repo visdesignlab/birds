@@ -177,7 +177,7 @@
             VISUALIZE MIGRATION
           </button>
         </div>
-        <p class="text-style" id="grebe-content3" style="opacity: 0;">
+        <p class="text-style" id="grebe-content3" style="opacity: 0; transition: transform 1s ease, opacity 1.5s ease;">
           <br> Over an entire year, the Great Salt Lake hosts anywhere from 2 to 5 million Eared Grebes a year, which at times is almost the entire North American population. 
           As the Grebes travel between Mexico and the Great Salt Lake, the associated climate with these locations largely directs the 
           success of their migration. 
@@ -192,6 +192,7 @@
           </button>
         </div>
       </div>
+
       <div class="grebe-map" id="grebe-map">
         <svg id="grebe-map-svg" 
           style=
@@ -203,12 +204,9 @@
       <div class="EG_linegraph" style="display: none;">
         <svg id="grebe_linegraph" 
         style=
-        "width:700px;
-        height: 700px;" >
+        "width: 870px;
+        height: 870px;" >
         </svg>
-        <!-- <button class="button-55" id="eg_linegraph_animation" role="button">
-          CLICK TO START ANIMATION
-        </button> -->
       </div>
     </div>
 
@@ -227,7 +225,8 @@
     scrollbar-width: none;">
       <div class="pelican-content" 
       style=
-      "transition: transform 1s ease, 
+      "opacity: 0;
+      transition: transform 1s ease, 
       opacity 1.5s ease; 
       overflow-wrap: break-word; 
       word-wrap: break-word; 
@@ -237,9 +236,18 @@
       font-size: 1.2vw;
       width: 40%;
       margin-left: 3vw;">
-      <p class = "text-style" id="pelican-content1">
+      <p class = "text-style" id="pelican-content1" style="transition: transform 1s ease, opacity 1.5s ease;">
         <span style="font-size: 2.6vw; line-height: 1;"> T</span>he world's second largest colony of American White Pelican's exist on Great Salt Lake's Gunnison Island. Located on the 
-        west shore of the the lake in the north arm of Gunnison bay, pelicans have been known to come here for over 125,000 years.  </p>
+        west shore of the the lake in the north arm of Gunnison bay, pelicans have been known to come here for over 125,000 years.  
+      </p>
+      <svg style="width: 300px; height: 400px;">
+        <image xlink:href="src/gunn_island.jpg"/>
+      </svg>
+      <div id = "amp_linegraph_animation" style="justify-content: center; align-items: center; line-height: 1; opacity: 1; margin-top: 5vh;"> 
+        <button class="button-55" id="amp_linegraph_animation" role="button">
+          POPULATION OVER THE YEARS
+        </button>
+      </div>
       </div>
       <div id="pelican-map">
         <svg id="pelican-map-svg" 
@@ -249,7 +257,13 @@
           margin-top: 5vh;">
         </svg>
       </div>
-
+      <div class="AMP_linegraph" style="display: none;">
+        <svg id="pelican_linegraph" 
+        style=
+        "width: 870px;
+        height: 870px;" >
+        </svg>
+      </div>
     </div>
   
 
