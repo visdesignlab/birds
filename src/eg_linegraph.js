@@ -96,9 +96,11 @@ function createLinegraph(svg, path) {
             .style("font-size", "32px")
             .style("font-weight", "bold")
             .style("fill", "black");
+            
 
         // Function to update graph for a specific year
-        function updateGraph(year, isFirstYear = false) {
+        function updateGraph(year) {
+            console.log(`Updating graph for year: ${year}`);
             const dataset = [
                 { month: "January", value: data.jan_avg[year] || 0},
                 { month: "February", value: data.feb_avg[year] || 0},
@@ -114,18 +116,15 @@ function createLinegraph(svg, path) {
                 { month: "December", value: data.dec_avg[year] || 0}
             ];
 
-            // Update animated line
             path.datum(dataset)
-                .transition()
-                .duration(500) // 🔹 Smooth transition over 1s
-                .ease(d3.easeLinear)
-                .attr("d", line);
-
-            // Update year label
-            yearText.text(`Year: ${year}`);
-
-            // ** If not the first year, add previous line as faded **
-            if (!isFirstYear) {
+            .transition()
+            .duration(500)
+            .ease(d3.easeLinear)
+            .attr("d", line)
+            .on("end", function() { 
+                console.log('Animation complete - adding grey line');
+                
+                // Add the grey line after animation completes
                 fadedLinesGroup.append("path")
                     .datum(dataset)
                     .attr("fill", "none")
@@ -133,43 +132,19 @@ function createLinegraph(svg, path) {
                     .attr("stroke-width", 2)
                     .attr("opacity", 0.5)
                     .attr("d", line);
-            }
+            });
+
+            yearText.text(`Year: ${year}`);
+
         }
 
         // Cycle through years with animation
         function animateYears() {
+            // Stop when reach last year
             if (currentYearIndex >= years.length) return;
             const isFirstYear = currentYearIndex === 0;
             const currentYear = years[currentYearIndex];
-
             updateGraph(currentYear, isFirstYear);
-
-            if (isFirstYear) {
-                // ** Store the first year as a faded line after animation completes **
-                setTimeout(() => {
-                    fadedLinesGroup.append("path")
-                        .datum([
-                            { month: "January", value: data.jan_avg[currentYear] || 0 },
-                            { month: "February", value: data.feb_avg[currentYear] || 0 },
-                            { month: "March", value: data.march_avg[currentYear] || 0 },
-                            { month: "April", value: data.april_avg[currentYear] || 0 },
-                            { month: "May", value: data.may_avg[currentYear] || 0 },
-                            { month: "June", value: data.june_avg[currentYear] || 0 },
-                            { month: "July", value: data.july_avg[currentYear] || 0 },
-                            { month: "August", value: data.aug_avg[currentYear] || 0 },
-                            { month: "September", value: data.sep_avg[currentYear] || 0 },
-                            { month: "October", value: data.oct_avg[currentYear] || 0 },
-                            { month: "November", value: data.nov_avg[currentYear] || 0 },
-                            { month: "December", value: data.dec_avg[currentYear] || 0 }
-                        ])
-                        .attr("fill", "none")
-                        .attr("stroke", "lightgray")
-                        .attr("stroke-width", 2)
-                        .attr("opacity", 0.5)
-                        .attr("d", line);
-                }, 1000); // Wait for first year's animation to finish
-            }
-
             currentYearIndex++;
             setTimeout(animateYears, 500); // Controls animation speed
         }

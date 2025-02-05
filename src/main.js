@@ -103,7 +103,6 @@ function setup() {
             opening.style.display = 'none'; 
             openingStoryline.style.display = 'none'; 
             grebeOpening.style.display = 'none';
-            // pelicanOpening.style.display = 'block';
             pelicanContent.style.opacity = 1;
             pelicanContent.style.visibility = 'visible'; 
       }
